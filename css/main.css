@@ -16,7 +16,7 @@
 
   --header-height: 64px;
   --sidebar-width: 280px;
-  --content-max-width: 840px;
+  --content-max-width: 1100px;
 }
 
 /* ============================
@@ -107,7 +107,7 @@ a {
    Layout
    ============================ */
 .layout {
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 0 24px;
   display: flex;

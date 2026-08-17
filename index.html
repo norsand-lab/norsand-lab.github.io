@@ -47,6 +47,7 @@
           <li><a href="#hardening-softening">Hardening and Softening</a></li>
           <li><a href="#elastic-stiffness">Elastic Stiffness</a></li>
           <li><a href="#drained-undrained">Drained and Undrained Loading</a></li>
+          <li><a href="#norsand-parameters">NorSand Parameters</a></li>
           <li><a href="#case-visualizations">Case Visualizations</a></li>
           <li><a href="#validation-scope">Validation and Current Scope</a></li>
           <li><a href="#simulation-parameters">Simulation Parameters</a></li>
@@ -103,9 +104,9 @@
         <p class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>q</mi><mo>=</mo><msubsup><mi>&#x3c3;</mi><mn>1</mn><mo lspace="0em" rspace="0em">&#x2032;</mo></msubsup><mo>&#x2212;</mo><msubsup><mi>&#x3c3;</mi><mn>3</mn><mo lspace="0em" rspace="0em">&#x2032;</mo></msubsup></mrow></math></p>
         <p>Their ratio is called the stress ratio:</p>
         <p class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>&#x3b7;</mi><mo>=</mo><mfrac><mi>q</mi><msup><mi>p</mi><mo lspace="0em" rspace="0em">&#x2032;</mo></msup></mfrac></mrow></math></p>
-        <p>The stress ratio provides a convenient measure of how strongly the specimen is being sheared relative to the pressure confining it. The soil does not respond directly to total stress alone. Its strength and deformation are governed mainly by effective stress, the stress carried through the soil skeleton after accounting for pore-water pressure. This distinction becomes especially important in undrained loading. When water cannot escape, pore-water pressure may increase, causing the effective stress to decrease even though the externally applied total stress continues to increase. In <span class="tooltip"><ins>tensor form</ins><span class="tooltiptext">TO BE ADDED</span></span>, the effective-stress principle may be written as</p>
+        <p>The stress ratio provides a convenient measure of how strongly the specimen is being sheared relative to the pressure confining it. The soil does not respond directly to total stress alone. Its strength and deformation are governed mainly by effective stress, the stress carried through the soil skeleton after accounting for pore-water pressure. This distinction becomes especially important in undrained loading. When water cannot escape, pore-water pressure may increase, causing the effective stress to decrease even though the externally applied total stress continues to increase. In <span class="tooltip"><ins>tensor form</ins><span class="tooltiptext">A mathematical representation that captures stress or strain simultaneously in all directions at a point, rather than along a single axis.</span></span>, the effective-stress principle may be written as</p>
         <p class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mi>&#x3c3;</mi><mo lspace="0em" rspace="0em" class="tml-prime">&#x2032;</mo></msup><mo>=</mo><mi>&#x3c3;</mi><mo>&#x2212;</mo><mi>u</mi><mi>I</mi></mrow></math></p>
-        <p>where <em>σ</em> is the total stress tensor, <em>u</em> is pore-water pressure, and <em>I</em> is the identity tensor.</p>
+        <p>where <em>σ</em> is the <span class="tooltip">total stress tensor<span class="tooltiptext">A mathematical representation of the total stress on a soil element in all directions at a point, before subtracting pore-water pressure</span></span>, <em>u</em> is pore-water pressure, and <em>I</em> is the identity tensor.</p>
       </section>
 
       <section id="void-ratio" class="content__block">
@@ -196,20 +197,71 @@
         <p>The website visualizations include a separate plot of excess pore-water pressure against axial strain for undrained simulations. NorSand parameters are generally calibrated together using several triaxial tests rather than fitting each parameter independently from a single response curve. A reliable calibration should reproduce the stress–strain response, the volumetric or pore-pressure response, and the effects of initial state and confining pressure.</p>
       </section>
 
+      <section id="drained-undrained" class="content__block content__block--stub">
+      <h2><ins>NorSand Parameters</ins></h2>
+      <p style="color:red;">CONTENT TO BE ADDED</p>
+      <table style="width:600px;">
+        <tr>
+          <th>Property</th>
+          <th>Definition</th>
+        </tr>
+        <tr>
+          <th colspan="2" style="text-align: left;">Critical State Line</th>
+        </tr>
+        <tr>
+          <td><i>Γ</i></td>
+          <td>The reference void ratio for the CSL.  It anchors the position of the CSL in e–ln(p') space.</td>
+        </tr>
+        <tr>
+          <td><i>λ</i></td>
+          <td>The slope of the critical state line in e–ln(p') space. It controls how the critical void ratio changes with confining stress.</td>
+        </tr>
+        <tr>
+          <th colspan="2" style="text-align: left;">Plasticity</th>
+        </tr>
+        <tr>
+          <td><i>M</i></td>
+          <td>The critical friction ratio.  It sets the ultimate strength the soil approaches at large strains.</td>
+        </tr>
+        <tr>
+          <td><i>N</i></td>
+          <td>A volumetric coupling parameter that links plastic dilatancy to the distance from the image (maximum dilatancy) stress ratio</td>
+        </tr>
+        <tr>
+          <td><i>H</i></td>
+          <td>The plastic hardening modulus, controlling how quickly the yield surface hardens/softens with plastic shear strain</td>
+        </tr>
+        <tr>
+          <td><i>χ<sub>tc</sub></i></td>
+          <td>The dilatancy constant, relating the state parameter (ψ) to the maximum dilatancy the soil can mobilize</td>
+        </tr>
+        <tr>
+          <th colspan="2" style="text-align: left;">Elasticity</th>
+        </tr>
+        <tr>
+          <td><i>I<sub>r</sub></i></td>
+          <td>Soil rigidity constant, representing the ratio of elastic shear modulus to mean effective stress</td>
+        </tr>
+        <tr>
+          <td><i>ν</i></td>
+          <td>Poisson’s ratio which measure how much the soil deforms in the direction perpendicular to loading</td>
+        </tr>
+      </table>
+      </section>
+
       <section id="case-visualizations" class="content__block content__block--stub">
         <h2><del>What the Visualizations Show</del><ins>Case Visualizations</ins></h2>
         <p>Each visualization follows the complete simulation history as axial strain increases. Depending on the selected example, users can observe:</p>
         <p><ul><li>deviator stress versus axial strain;</li><li>mean effective stress versus deviator stress;</li><li>volumetric strain versus axial strain;</li><li>excess pore-water pressure versus axial strain;</li><li>current and image stress ratios;</li><li>contraction and dilation;</li><li>the current NorSand yield surface;</li><li>the current image point;</li><li>the limiting image condition;</li><li>hardening and softening;</li><li>the evolution toward critical state</li></ul></p>
         <p>A strain slider allows the user to move through the simulation and see how the stress state and internal model variables evolve together. The objective is to show the model mechanisms underlying the calculated response at each stage of loading.</p>
         <iframe src="Drained_Dense.html" width="910" height="620" frameborder="0"></iframe>
-        <p><ins>The first two visualizations show the drained conditions for dense and loose soil.  Note that</ins> </p>
-        <p style="color:red;">TO BE ADDED: THINGS TO NOTE ABOUT DRAINED DENSE</p>
+        <p><ins>The first two visualizations show the drained conditions for dense and loose soil.  Note that with an initial state parameter of <i>ψ₀</i> = -0.158, this specimen starts dense of critical. It contracts only slightly at first, reaching a maximum volumetric strain of about 0.4% near <i>ε₁</i> = 1.3%, before the plastic dilatancy <i>D<sub>p</sub></i> turns negative and the specimen dilates continuously, reaching -5.7% volumetric strain by <i>ε₁</i> ≈ 19%. Deviator stress rises quickly to a peak of about 1656 kPa near <i>ε₁</i> = 5%, then softens toward critical state as the image pressure <math xmlns="http://www.w3.org/1998/Math/MathML"><msubsup><mi>p</mi><mrow><mi>i</mi><mo separator="true">,</mo><mo>&#x2061;</mo></mrow><mo lspace="0em" rspace="0em">&#x2032;</mo></msubsup></math> exceeds its limiting value <math xmlns="http://www.w3.org/1998/Math/MathML"><msubsup><mi>p</mi><mrow><mi>i</mi><mo separator="true">,</mo><mi>max</mi><mo>&#x2061;</mo></mrow><mo lspace="0em" rspace="0em">&#x2032;</mo></msubsup></math> and is pulled back down. By the end of the simulation the stress ratio <i>q/p′</i> has fallen to about 1.52, still slightly above <i>M</i> = 1.45 — the specimen is closing in on critical state but has not fully reached it within the simulated strain range.</ins> </p>
         <iframe src="Drained_Loose.html" width="920" height="620" frameborder="0"></iframe>
-        <p style="color:red;">TO BE ADDED: THINGS TO NOTE ABOUT DRAINED LOOSE</p>
-        <p><ins>The next two visualizations show the undrained conditions for dense and loose soil. </ins></p>
+        <p><ins>With an initial state parameter of <i>ψ₀</i> = 0.127, this specimen starts loose of critical. Volumetric strain is contractive throughout — it never dilates — and is still increasing at close to 8% by the end of the simulation. Deviator stress climbs steadily without ever forming a peak, still rising at <i>ε₁</i> ≈ 23%, since the image pressure <math xmlns="http://www.w3.org/1998/Math/MathML"><msubsup><mi>p</mi><mrow><mi>i</mi><mo separator="true">,</mo><mo>&#x2061;</mo></mrow><mo lspace="0em" rspace="0em">&#x2032;</mo></msubsup></math> remains below <math xmlns="http://www.w3.org/1998/Math/MathML"><msubsup><mi>p</mi><mrow><mi>i</mi><mo separator="true">,</mo><mi>max</mi><mo>&#x2061;</mo></mrow><mo lspace="0em" rspace="0em">&#x2032;</mo></msubsup></math> throughout and the response is one of continuous hardening rather than softening. The final stress ratio <i>q/p′</i> ≈ 1.38 remains below <i>M</i> = 1.45, showing the specimen is still hardening toward, rather than sitting on, critical state.</ins></p>
+        <p><ins>The next two visualizations show the undrained conditions for dense and loose soil.</ins></p>
         <iframe src="Undrained_Dense.html" width="900" height="600" frameborder="0"></iframe>
         <iframe src="Undrained_Loose.html" width="900" height="600" frameborder="0"></iframe>
-        <p style="color:red;">TO BE ADDED: THINGS TO NOTE ABOUT UNDRAINED CONDITIONS</p>
+        <p><ins>The dense case (<i>ψ₀</i> = -0.032) and the loose case (<i>ψ₀</i> = 0.076) illustrate opposite ends of the undrained response. In the dense case, an initially contractive tendency drives excess pore-water pressure up to a peak of roughly 226 kPa within the first 2% of axial strain, dropping mean effective stress <i>p′</i> to a minimum near 304 kPa. As the specimen's tendency shifts toward dilation, Δu falls back to about 68 kPa and <i>p′</i> recovers to nearly 628 kPa, allowing deviator stress to climb continuously to about 909 kPa — ending almost exactly on the critical state line.  The loose case shows the opposite trajectory. Deviator stress reaches only a small, early peak (about 98 kPa near <i>ε₁</i> = 0.7%) before collapsing to just 16 kPa by the end of the test, as excess pore-water pressure rises steadily to nearly 196 kPa and mean effective stress is driven down from 202 kPa to only about 11 kPa. This progressive loss of strength and effective stress at essentially constant total stress is the model's representation of static liquefaction: the stress path is dragged down along the critical state line toward the origin rather than out along it.</ins></p>
       </section>
 
       <section id="simulation-parameters" class="content__block content__block--stub">

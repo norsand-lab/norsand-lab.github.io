@@ -26,16 +26,50 @@
 
     <aside class="sidebar">
       <nav class="sidebar__nav" aria-label="Page sections">
-
+      <form>
         <p class="sidebar__eyebrow">Critical State Line Parameters</p>
-        <form>
-          <table>
+          <table class="sidebar__table">
             <tr>
-              <td class="sidebar__list">Reference Void Ratio</td>
+              <td>Reference void ratio(Γ)</td>
+              <td><input type="number"></td>
+            </tr>
+            <tr>
+              <td>CSL slope(λ)</td>
               <td><input type="number"></td>
             </tr>
           </table>
-        </form>
+        <p class="sidebar__eyebrow">Plasticity</p>
+          <table class="sidebar__table">
+            <tr>
+              <td>Critical friction ratio(M)</td>
+              <td><input type="number"></td>
+            </tr>
+            <tr>
+              <td>Volumetric coupling parameter(N)</td>
+              <td><input type="number"></td>
+            </tr>
+            <tr>
+              <td>Plastic hardening modulus(H)</td>
+              <td><input type="number"></td>
+            </tr>
+            <tr>
+              <td>Dilatancy constant(χ<sub>tc</sub>)</td>
+              <td><input type="number"></td>
+            </tr>
+          </table>
+        <p class="sidebar__eyebrow">Elasticity</p>
+          <table class="sidebar__table">
+            <tr>
+              <td>Soil rigidity constant(I<sub>r</sub>)</td>
+              <td><input type="number"></td>
+            </tr>
+            <tr>
+              <td>Poisson’s ratio(ν)</td>
+              <td><input type="number"></td>
+            </tr>
+            <tr>
+          </table>
+      </form>        
       </nav>
     </aside>
 

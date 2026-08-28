@@ -34,6 +34,9 @@ body {
   font-size: 15px;
   line-height: 1.65;
 }
+section {
+  scroll-margin-top: 50px;
+}
 
 h1, h2 {
   font-family: var(--font-display);
@@ -161,6 +164,11 @@ a {
   color: var(--color-accent);
 }
 
+.sidebar__table td{
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
 /* ============================
    Content
    ============================ */
@@ -196,19 +204,19 @@ a {
   margin: 0 0 16px;
 }
 
-table {
+.learn_table {
   font-family: var(--font-body);
   border-collapse: collapse;
   width: 100%;
 }
 
-td, th {
+.learn_table td, .learn_table th {
   border: 1px solid var(--color-border);
   text-align: center;
   padding: 8px;
 }
 
-tr:nth-child(even) {
+.learn_table tr:nth-child(even) {
   background-color: rgba(22, 163, 74, 0.2);
 }
 

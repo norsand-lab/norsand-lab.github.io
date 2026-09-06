@@ -14,6 +14,14 @@ def data_choose(data, stepnum):
         filtered.append(data[int(np.round(i))])
     return filtered
 
+#outputs shortened list with stepnum items with log scale
+# def data_choose(data, stepnum):  
+#     filtered = []
+#     base = np.power(len(data), (1/(stepnum-1)))
+#     for i in range(stepnum):
+#         filtered.append(data[int(np.round(np.power(base, i)))-1])
+#     return filtered
+
 # calculates p and q coordinates for yield curve
 def yield_curve(pi, M, n=200):
     p = np.linspace(0, pi * np.e, n)
@@ -25,7 +33,7 @@ data= {}
 for col in raw_data:            # slices data set
     data.update({col: raw_data[col][:]})          
 M = 1.45                        # CSL slope
-slide_steps = 24                # number of slider steps
+slide_steps = 30                # number of slider steps
 initial_step = 0                # step that slider starts on
 static_num = 5                  # number of static traces
 step_to_indices = {}            # stores and indexes dynamic traces
@@ -52,7 +60,6 @@ fig = make_subplots(
     specs=[[{"rowspan": 3}, {}],
            [     None,      {}],
            [     None,      {}]],
-    subplot_titles=("Drained Loose: Stress Path, Yield Surface, and Image Point", "", "", "")
 )
 
 # Static traces - always visible
@@ -182,7 +189,7 @@ for k in range(len(step_to_indices)):
     visible = [True] * static_num + [False] * (len(fig.data) - static_num)
     for i in step_to_indices[k]:
         visible[i] = True
-    steps.append(dict(method="update", args=[{"visible": visible}], label=f"{fig.data[step_to_indices[k][5]].x[0]:.1f}%"))
+    steps.append(dict(method="update", args=[{"visible": visible}], label=f"{fig.data[step_to_indices[k][5]].x[0]:.3f}%"))
     
 sliders = [dict(
     active=initial_step, 
@@ -205,16 +212,16 @@ a_range = [min(data["axial_strain_percent"]), max(data["axial_strain_percent"])]
 lnp_range = np.log10([min(data["p_kPa"]), max(data["p_kPa"])])
 #a_buffer = 0.15 * (max(data["axial_strain_percent"]) - min(data["axial_strain_percent"]))
 
-fig.update_yaxes(title_text="Deviatoric Stress, q (kPa)", range=[0,  2.5 * q_max], row=main_x, col=main_y)
-fig.update_xaxes(title_text="Mean Effective Stress, p' (kPa)", range=[0,  1.15 * p_max], row=main_x, col=main_y)
+fig.update_yaxes(title_text="Deviatoric stress, q (kPa)", range=[0,  2.5 * q_max], row=main_x, col=main_y)
+fig.update_xaxes(title_text="Mean effective stress, p' (kPa)", range=[0,  1.15 * p_max], row=main_x, col=main_y)
 
 fig.update_yaxes(title_text="q (kPa)", range=[q_range[0], q_range[1] + q_buffer], row=a_x, col=a_y)  
-fig.update_yaxes(title_text="Volumetric Strain, ε<sub>V</sub> (%)", range=[v_range[0], v_range[1] + v_buffer], row=b_x, col=b_y) 
-fig.update_yaxes(title_text="Void Ratio, e<sub>c</sub>", range=[ec_range[0] - ec_buffer, ec_range[1] + ec_buffer], row=c_x, col=c_y)  
+fig.update_yaxes(title_text="Volumetric strain, ε<sub>V</sub> (%)", range=[v_range[0], v_range[1] + v_buffer], row=b_x, col=b_y) 
+fig.update_yaxes(title_text="Void ratio, e", range=[ec_range[0] - ec_buffer, ec_range[1] + ec_buffer], row=c_x, col=c_y)  
 
-fig.update_xaxes(title_text="Axial Strain, ε<sub>1</sub> (%)", title_standoff=0, range=a_range, row=a_x, col=a_y)
-fig.update_xaxes(title_text="Axial Strain, ε<sub>1</sub> (%)", title_standoff=0, range=a_range, row=b_x, col=b_y)
-fig.update_xaxes(title_text="ln p' (kPa)", type="log", range=lnp_range, title_standoff=0, row=c_x, col=c_y)
+fig.update_xaxes(title_text="Axial strain, ε<sub>1</sub> (%)", title_standoff=0, range=a_range, row=a_x, col=a_y)
+fig.update_xaxes(title_text="Axial strain, ε<sub>1</sub> (%)", title_standoff=0, range=a_range, row=b_x, col=b_y)
+fig.update_xaxes(title_text="Mean effective stress, p'(kPa, log scale)", type="log", range=lnp_range, title_standoff=0, row=c_x, col=c_y)
 
 fig.update_layout(
     width=900,

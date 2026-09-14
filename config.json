@@ -1,0 +1,7 @@
+{
+    "packages": ["numpy", "pandas", "plotly"],
+    "files": {
+    "./modules/geomechanics.py": "./modules/geomechanics.py",
+    "./modules/norsand_core.py": "./modules/norsand_core.py"
+  }
+}

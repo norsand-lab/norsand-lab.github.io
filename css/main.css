@@ -1,4 +1,3 @@
-
 :root {
   --color-bg: rgba(248, 250, 255, 1);
   --color-panel: rgba(255, 255, 255, 1);
@@ -106,6 +105,11 @@ a {
   color: var(--color-accent);
 }
 
+.site-header__nav a[aria-current="page"] {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
 /* ============================
    Layout
    ============================ */
@@ -167,6 +171,220 @@ a {
 .sidebar__table td{
   font-size: 10px;
   color: var(--color-text-muted);
+}
+
+/* ============================
+   Parameter panel (visualization inputs)
+   ============================ */
+.param-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.param-panel__intro {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  margin: 0 0 18px;
+}
+
+.param-group {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-panel);
+  margin: 0 0 16px;
+  padding: 14px 16px 16px;
+  min-width: 0;
+}
+
+.param-group__title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.param-group__title select {
+  font-family: var(--font-ui);
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--color-text);
+  padding: 3px 6px;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  background: var(--color-bg);
+}
+
+.param-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.param-field:last-child {
+  margin-bottom: 0;
+}
+
+.param-field label {
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+  flex: 1;
+  line-height: 1.3;
+}
+
+.param-field label .param-symbol {
+  font-family: var(--font-mono);
+  color: var(--color-text-faint);
+}
+
+.param-field input[type="number"],
+.param-field select {
+  width: 84px;
+  flex-shrink: 0;
+  padding: 5px 7px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  text-align: right;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.param-field select {
+  text-align: left;
+  width: auto;
+  font-family: var(--font-ui);
+}
+
+.param-field input[type="number"]:focus,
+.param-field select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.12);
+}
+
+.param-unit {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--color-text-faint);
+  width: 26px;
+  flex-shrink: 0;
+}
+
+.param-hint {
+  font-size: 11px;
+  color: var(--color-text-faint);
+  line-height: 1.4;
+  margin: -4px 0 10px;
+}
+
+.param-subgroup {
+  transition: opacity .15s ease;
+}
+
+.param-hidden {
+  display: none !important;
+}
+
+.param-actions {
+  bottom: 0;
+  padding-top: 4px;
+  background: linear-gradient(to bottom, rgba(248,250,255,0), var(--color-bg) 30%);
+}
+
+.run-button {
+  width: 100%;
+  padding: 11px 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-accent);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: opacity .15s ease, transform .1s ease;
+}
+
+.run-button:hover {
+  opacity: 0.9;
+}
+
+.run-button:active {
+  transform: scale(0.99);
+}
+
+.reset-button {
+  width: 100%;
+  padding: 8px 12px;
+  margin-top: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color .15s ease, color .15s ease;
+}
+
+.reset-button:hover {
+  border-color: var(--color-text-faint);
+  color: var(--color-text);
+}
+
+/* ============================
+   Visualization placeholder panel
+   ============================ */
+.viz-placeholder {
+  min-height: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 6px;
+  border: 1px dashed var(--color-border);
+  border-radius: 12px;
+  background: var(--color-panel);
+  color: var(--color-text-faint);
+  padding: 24px;
+}
+
+.viz-placeholder__icon {
+  font-family: var(--font-mono);
+  font-size: 26px;
+  color: var(--color-text-faint);
+  margin-bottom: 4px;
+}
+
+.viz-placeholder strong {
+  color: var(--color-text-muted);
+  font-family: var(--font-ui);
+  font-size: 14px;
+}
+
+.viz-placeholder p {
+  max-width: 360px;
+  font-size: 12.5px;
+  color: var(--color-text-faint);
+  margin: 0;
 }
 
 /* ============================

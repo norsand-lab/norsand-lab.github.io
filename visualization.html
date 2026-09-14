@@ -9,6 +9,9 @@
   <link href="https://fonts.googleapis.com/css?family=JetBrains+Mono&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css?family=Roboto+Serif&display=swap" rel="stylesheet" />
   <link href="css/main.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://pyscript.net/releases/2026.6.1/core.css" />
+  <script type="module" src="https://pyscript.net/releases/2026.6.1/core.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 </head>
 <body>
 
@@ -17,7 +20,7 @@
       <span class="site-header__logo">NorSand Lab</span>
       <nav class="site-header__nav">
         <a href="./index.html">Learn</a>
-        <a href="./visualization.html">Visualizations</a>
+        <a href="./visualization.html" aria-current="page">Visualizations</a>
       </nav>
     </div>
   </header>
@@ -26,59 +29,195 @@
 
     <aside class="sidebar">
       <nav class="sidebar__nav" aria-label="Page sections">
-      <form>
-        <p class="sidebar__eyebrow">Critical State Line Parameters</p>
-          <table class="sidebar__table">
-            <tr>
-              <td>Reference void ratio(Γ)</td>
-              <td><input type="number"></td>
-            </tr>
-            <tr>
-              <td>CSL slope(λ)</td>
-              <td><input type="number"></td>
-            </tr>
-          </table>
-        <p class="sidebar__eyebrow">Plasticity</p>
-          <table class="sidebar__table">
-            <tr>
-              <td>Critical friction ratio(M)</td>
-              <td><input type="number"></td>
-            </tr>
-            <tr>
-              <td>Volumetric coupling parameter(N)</td>
-              <td><input type="number"></td>
-            </tr>
-            <tr>
-              <td>Plastic hardening modulus(H)</td>
-              <td><input type="number"></td>
-            </tr>
-            <tr>
-              <td>Dilatancy constant(χ<sub>tc</sub>)</td>
-              <td><input type="number"></td>
-            </tr>
-          </table>
-        <p class="sidebar__eyebrow">Elasticity</p>
-          <table class="sidebar__table">
-            <tr>
-              <td>Soil rigidity constant(I<sub>r</sub>)</td>
-              <td><input type="number"></td>
-            </tr>
-            <tr>
-              <td>Poisson’s ratio(ν)</td>
-              <td><input type="number"></td>
-            </tr>
-            <tr>
-          </table>
-      </form>        
+      <form class="param-panel" id="norsand-form">
+
+        <p class="param-panel__intro">Set up a conventional triaxial compression case and the full NorSand parameter set, then generate the stress path, stress–strain, and volumetric/pore-pressure response.</p>
+
+        <!-- Test setup -->
+        <div class="param-group">
+          <div class="param-group__title">Test setup</div>
+
+          <div class="param-field">
+            <label for="test-type">Test type</label>
+            <select id="test-type" name="test-type">
+              <option value="drained">CID &ndash; drained</option>
+              <option value="undrained">CIU &ndash; undrained</option>
+            </select>
+          </div>
+
+          <div class="param-field">
+            <label for="max-strain"><span class="param-symbol">&epsilon;<sub>1,max</sub></span> &ndash; target axial strain</label>
+            <input type="number" id="max-strain" value=22 name="max-strain" step="any">
+            <span class="param-unit">%</span>
+          </div>
+
+          <div class="param-field">
+            <label for="max-steps"><span class="param-symbol">n-steps</span> &ndash; number of simulation steps</label>
+            <input type="number" id="max-steps" value=3700 name="max-steps" step="any">
+          </div>
+        </div>
+
+        <!-- Initial state -->
+        <div class="param-group">
+          <div class="param-group__title">Initial state</div>
+
+          <div class="param-field">
+            <label for="p0"><span class="param-symbol">p&prime;<sub>0</sub></span> &ndash; initial mean effective stress</label>
+            <input type="number" id="p0" value=410 name="p0" step="any">
+            <span class="param-unit">kPa</span>
+          </div>
+
+          <div class="param-field">
+            <label for="psi0"><span class="param-symbol">&psi;<sub>0</sub></span> &ndash; initial state parameter</label>
+            <input type="number" id="psi0" value=-0.158 name="psi0" step="any">
+          </div>
+
+          <div class="param-field">
+            <label for="ocr"><span class="param-symbol">OCR</span> &ndash; over-consolidation ratio</label>
+            <input type="number" id="ocr" value=1.1 name="ocr" step="any">
+          </div>
+
+          <div class="param-field">
+            <label for="eta0"><span class="param-symbol">eta<sub>0</sub></span> &ndash; initial stress ratio</label>
+            <input type="number" id="eta0" value=0 name="eta0" step="any">
+          </div>
+        </div>
+
+        <!-- Critical state line -->
+        <div class="param-group">
+          <div class="param-group__title">
+            Critical state line
+            <select id="csl-form" name="csl-form">
+              <option value="curved">Curved</option>
+              <option value="semi_log">Semi-log</option>
+            </select>
+          </div>
+
+          <div class="param-subgroup param-hidden" id="csl-semilog-fields">
+            <div class="param-field">
+              <label for="gamma"><span class="param-symbol">&Gamma;</span> &ndash; reference void ratio</label>
+              <input type="number" id="gamma" value=86 name="gamma" step="any">
+              <span class="param-unit">%</span>
+            </div>
+
+            <div class="param-field">
+              <label for="lambda"><span class="param-symbol">&lambda; / &lambda;<sub>10</sub></span> &ndash; CSL slope</label>
+              <input type="number" id="lambda" value=0.07 name="lambda" step="any">
+            </div>
+          </div>
+
+          <div class="param-subgroup" id="csl-curved-fields">
+            <div class="param-field">
+              <label for="ca"><span class="param-symbol">C<sub>a</sub></span></label>
+              <input type="number" id="ca" value=1.01 name="ca" step="any">
+            </div>
+
+            <div class="param-field">
+              <label for="cb"><span class="param-symbol">C<sub>b</sub></span></label>
+              <input type="number" id="cb" value=0.087 name="cb" step="any">
+            </div>
+
+            <div class="param-field">
+              <label for="cc"><span class="param-symbol">C<sub>c</sub></span></label>
+              <input type="number" id="cc" value=0.38 name="cc" step="any">
+            </div>
+          </div>
+
+          <div class="param-subgroup">
+            <div class="param-field">
+              <label for="mtc"><span class="param-symbol">M / M<sub>tc</sub></span> &ndash; critical friction ratio</label>
+              <input type="number" id="mtc" value=1.45 name="mtc" step="any">
+            </div>
+            <div class="param-field">
+              <label for="pref"><span class="param-symbol">pref</span> &ndash; reference pressure</label>
+              <input type="number" id="pref" value=100 name="pref" step="any">
+            </div>
+          </div>
+        </div>
+
+        <!-- Plasticity -->
+        <div class="param-group">
+          <div class="param-group__title">Plasticity</div>
+
+          <div class="param-field">
+            <label for="n_param"><span class="param-symbol">N</span> &ndash; volumetric coupling parameter</label>
+            <input type="number" id="n_param" value=0.45 name="n_param" step="any">
+          </div>
+
+          <div class="param-field">
+            <label for="chi-tc"><span class="param-symbol">&chi;<sub>tc</sub></span> &ndash; dilatancy constant</label>
+            <input type="number" id="chi-tc" value=5.3 name="chi-tc" step="any">
+          </div>
+
+          <div class="param-field">
+            <label for="h0"><span class="param-symbol">H<sub>0</sub></span> &ndash; hardening modulus</label>
+            <input type="number" id="h0" value=61 name="h0" step="any">
+          </div>
+
+          <div class="param-field">
+            <label for="hy"><span class="param-symbol">H<sub>y</sub></span> &ndash; hardening modulus</label>
+            <input type="number" id="hy" value=247 name="hy" step="any">
+          </div>
+
+          <div class="param-field">
+            <label for="s_param"><span class="param-symbol">S</span> &ndash; additional softening</label>
+            <input type="number" id="s_param" value=0 name="s_param" step="any">
+          </div>
+        </div>
+
+        <!-- Elasticity -->
+        <div class="param-group">
+          <div class="param-group__title">Elasticity</div>
+
+          <div class="param-field">
+            <label for="gref"><span class="param-symbol">G<sub>ref</sub></span> &ndash; reference shear modulus</label>
+            <input type="number" id="gref" value=22900 name="gref" step="any">
+            <span class="param-unit">kPa</span>
+          </div>
+
+          <div class="param-field">
+            <label for="m_exp"><span class="param-symbol">m</span> &ndash; stiffness exponent</label>
+            <input type="number" id="m_exp" value=0.47 name="m_exp" step="any">
+          </div>
+
+          <div class="param-field">
+            <label for="nu"><span class="param-symbol">&nu;</span> &ndash; Poisson&rsquo;s ratio</label>
+            <input type="number" id="nu" value=0.2 name="nu" step="any">
+          </div>
+        </div>
+
+        <div class="param-actions">
+          <button type="button" id="run-button" class="run-button">Generate visualization</button>
+          <button type="reset" class="reset-button">Reset parameters</button>
+        </div>
+
+      </form>
       </nav>
     </aside>
 
     <main class="content">
-        
-      
-
+      <section class="content__block">
+        <div class="viz-placeholder">
+          <div id="plotDiv">
+          </div>
+          <script type="py" config="./config.json" src="./gen_vis.py"></script>
+        </div>
+      </section>
     </main>
   </div>
+
+  <script>
+    const cslFormSelect = document.getElementById('csl-form');
+    const semilogFields = document.getElementById('csl-semilog-fields');
+    const curvedFields = document.getElementById('csl-curved-fields');
+
+    cslFormSelect.addEventListener('change', () => {
+      const isCurved = cslFormSelect.value === 'curved';
+      semilogFields.classList.toggle('param-hidden', isCurved);
+      curvedFields.classList.toggle('param-hidden', !isCurved);
+    });
+  </script>
+ 
 
 </body>
 </html>

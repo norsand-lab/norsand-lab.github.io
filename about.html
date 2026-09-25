@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorSand Lab</title>
+  <link href="https://fonts.googleapis.com/css?family=Inclusive+Sans&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=JetBrains+Mono&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Serif&display=swap" rel="stylesheet" />
+  <link href="css/main.css" rel="stylesheet" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <span class="site-header__logo"><img src="img/norsand-logo.svg" alt="NorSand Lab" style="height: 50px;"></span>
+      <nav class="site-header__nav">
+        <a href="./index.html">Learn</a>
+        <a href="./visualization.html">Visualizations</a>
+        <a href="./about.html" aria-current="page">About</a>
+        <a href="./team.html">Team</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <main class="content-about">
+        <h1>About the website</h1>
+        <section id="about" class="content__block">
+          <h2>Our mission</h2>
+          <p>Some NorSand concepts such as the state parameter, image point, internal cap, limiting yield surface, dilatancy, and yield-surface evolution can be difficult to understand from equations and static diagrams alone. Here, these concepts are explained gradually and connected to interactive visualizations of conventional triaxial tests. The purpose of this website is to make these ideas easier to learn.</p>
+          <p>The website is organized around three goals:</p>
+          <ul>
+            <li>Learn the basic ideas of Critical State Soil Mechanics and NorSand.</li>
+            <li>Visualize how stress, volume, state, dilatancy, and the NorSand yield surface evolve during loading.</li>
+            <li>Apply the model through validated examples, parameter sets, and, in later stages, reproducible implementation and calibration resources.</li>
+          </ul>
+        </section>
+        <section id="about" class="content__block">
+          <h2>Current scope and vision</h2>
+          <p>The current version should be interpreted as a learning and research visualization tool for monotonic CID and CIU triaxial compression. It is not yet a general three-dimensional NorSand implementation. At this stage, the website does not cover arbitrary stress paths, principal-stress rotation, triaxial extension, plane-strain loading, cyclic loading, or general finite-element stress integration. These capabilities may be considered in future stages of the project.</p>
+        </section>
+    </main>
+  </div>
+
+</body>
+</html>

@@ -16,6 +16,7 @@
   --header-height: 64px;
   --sidebar-width: 280px;
   --content-max-width: 1100px;
+  --narrow-content-max-width: 700px;
 }
 
 /* ============================
@@ -44,8 +45,8 @@ h1, h2 {
   margin: 0 0 20px;
 }
 
-h1 { font-size: 34px; }
-h2 { font-size: 30px; }
+h1 { font-size: 25px; }
+h2 { font-size: 20px; }
 
 p, ul {
   margin: 0 0 16px;
@@ -69,7 +70,7 @@ a {
   top: 0;
   z-index: 10;
   height: var(--header-height);
-  background: var(--color-bg);
+  background: var(--color-accent);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -84,10 +85,8 @@ a {
 }
 
 .site-header__logo {
-  font-family: var(--font-ui);
-  font-weight: 700;
-  font-size: 18px;
-  color: var(--color-accent);
+  display: flex;
+  align-items: center;
 }
 
 .site-header__nav {
@@ -96,17 +95,17 @@ a {
 }
 
 .site-header__nav a {
-  font-family: var(--font-body);
-  font-size: 13px;
-  color: var(--color-text-muted);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--color-bg);
 }
 
 .site-header__nav a:hover {
-  color: var(--color-accent);
+  color: var(--color-text-faint);
 }
 
 .site-header__nav a[aria-current="page"] {
-  color: var(--color-accent);
+  color: var(--color-bg);
   font-weight: 700;
 }
 
@@ -136,12 +135,10 @@ a {
 }
 
 .sidebar__eyebrow {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-weight: 700;
-  font-size: 10px;
-  letter-spacing: 0.04em;
-  color: var(--color-text-faint);
-  text-transform: uppercase;
+  font-size: 13px;
+  color: var(--color-accent);
   margin: 24px 0 8px;
 }
 
@@ -202,7 +199,7 @@ a {
   align-items: baseline;
   justify-content: space-between;
   gap: 8px;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: 10px;
   letter-spacing: 0.05em;
@@ -349,6 +346,22 @@ a {
   color: var(--color-text);
 }
 
+.supsub {
+    display: inline-block;
+}
+
+.supsub sup,
+.supsub sub {
+    position: relative;
+    display: block;
+    font-size: .8em;
+    line-height: .4;
+}
+
+.supsub sub {
+    top: .3em;
+}
+
 /* ============================
    Visualization placeholder panel
    ============================ */
@@ -437,6 +450,138 @@ a {
 .learn_table tr:nth-child(even) {
   background-color: rgba(22, 163, 74, 0.2);
 }
+/* ============================
+   About page
+   ============================ */
+.content-about {
+  flex: 1;
+  max-width: var(--narrow-content-max-width);
+  margin: 0 auto;
+  padding: 24px 0 24px;
+}
+
+/* ============================
+   Team page
+   ============================ */
+
+.content-team {
+  flex: 1;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 24px 0 24px;
+}
+
+.team-intro {
+  max-width: 640px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.team-card {
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 28px 24px;
+  text-align: center;
+}
+
+.team-card--lead {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  text-align: left;
+  padding: 28px 32px;
+}
+
+.team-card--lead .team-card__avatar {
+  width: 110px;
+  height: 110px;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.team-card--lead .team-card__body {
+  flex: 1;
+}
+
+.team-card--lead .team-card__bio {
+  max-width: 640px;
+}
+
+.team-card--lead .team-card__links {
+  justify-content: flex-start;
+}
+
+.team-card__avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 400;
+  color: #fff;
+  object-fit: cover;
+}
+
+.team-card__avatar--blue { background: var(--color-accent); }
+.team-card__avatar--green { background: #16A34A; }
+
+.team-card__name {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 18px;
+  color: var(--color-text);
+  margin: 0 0 4px;
+}
+
+.team-card__role {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin: 0 0 12px;
+}
+
+.team-card__bio {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0 0 14px;
+  line-height: 1.55;
+  text-align: left;
+}
+
+.team-card__links {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+}
+
+.team-card__links a {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1px;
+}
+
+.team-card__links a:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
 
 /* ============================
    Tooltip
@@ -478,6 +623,27 @@ a {
     position: relative;
     top: 0;
     max-height: none;
+  }
+
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .team-card--lead {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .team-card--lead .team-card__avatar {
+    margin: 0 auto 16px;
+  }
+
+  .team-card--lead .team-card__bio {
+    text-align: left;
+  }
+
+  .team-card--lead .team-card__links {
+    justify-content: center;
   }
 }
 

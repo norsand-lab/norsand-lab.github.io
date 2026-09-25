@@ -1,0 +1,34 @@
+To add html slider paste this:
+<div class="strain-slider-control" style="width:900px; margin-top:8px; font-family:sans-serif; font-size:14px;">
+            <label for="strain-slider">Axial Strain: <span id="strain-label">0.000%</span></label><br>
+            <input type="range" id="strain-slider" min="0" max="0" value="0" step="1" style="width:100%;">
+        </div>
+
+after plot div such as:<div id="28316d73-3f4a-49a3-a777-d642bd55751c" class="plotly-graph-div" style="height:600px; width:900px;">
+
+and this: 
+.then(function(gd) {
+                        var steps = (gd.layout.sliders && gd.layout.sliders[0] && gd.layout.sliders[0].steps) || [];
+
+                        // hide the built-in Plotly slider so it doesn't show alongside the HTML one
+                        Plotly.relayout(gd, {sliders: []});
+
+                        var slider = document.getElementById("strain-slider");
+                        var label = document.getElementById("strain-label");
+                        slider.max = Math.max(steps.length - 1, 0);
+
+                        function applyStep(k) {
+                            var step = steps[k];
+                            if (!step) return;
+                            Plotly.restyle(gd, step.args[0]);
+                            label.innerText = step.label;
+                        }
+
+                        slider.addEventListener("input", function(e) {
+                            applyStep(parseInt(e.target.value, 10));
+                        });
+
+                        if (steps.length) applyStep(0);
+                    })
+
+after the Plotly.newplot() call

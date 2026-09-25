@@ -11,7 +11,7 @@ from modules.norsand_core import run_triaxial
 from modules.norsand_core import NorSandParams
 
 # outputs shortened list with stepnum items with log scale
-def data_choose(data, stepnum):
+def data_choose_log(data, stepnum):
     filtered = []
     base = np.power(len(data), (1 / (stepnum - 1)))
     for i in range(stepnum):
@@ -33,10 +33,9 @@ def plot_graph(event):
     p0=float(document.getElementById("p0").value),
     psi0=float(document.getElementById("psi0").value),
     ocr=float(document.getElementById("ocr").value),
-    eta0=float(document.getElementById("eta0").value),
     csl_type=document.getElementById("csl-form").value,
     pref=float(document.getElementById("pref").value),
-    gamma=float(document.getElementById("gamma").value) / 100,
+    gamma=float(document.getElementById("gamma").value),
     lambda10=float(document.getElementById("lambda").value),
     ca=float(document.getElementById("ca").value),
     cb=float(document.getElementById("cb").value),
@@ -89,7 +88,10 @@ def plot_graph(event):
     # Static traces - always visible
     fig.add_trace(go.Scatter(x=[0, 2.5 * q_max / mtc], y=[0, 2.5 * q_max], visible=True, name="CSL", mode="lines", line=dict(dash='dot', color="blue")), row=main_x, col=main_y)
     fig.add_trace(go.Scatter(x=data["eps1_pct"], y=data["q_kpa"], visible=True, name="Loading Path", showlegend=False, line=dict(color="#282828")), row=a_x, col=a_y)
-    fig.add_trace(go.Scatter(x=data["eps1_pct"], y=data["epsv_pct"], visible=True, name="Loading Path", showlegend=False, line=dict(color="#282828")), row=b_x, col=b_y)
+    if PARAMS.drainage == "drained":
+        fig.add_trace(go.Scatter(x=data["eps1_pct"], y=data["epsv_pct"], visible=True, name="Loading Path", showlegend=False, line=dict(color="#282828")), row=b_x, col=b_y)
+    elif PARAMS.drainage == "undrained":
+        fig.add_trace(go.Scatter(x=data["eps1_pct"], y=pressure, visible=True, name="Loading Path", showlegend=False, line=dict(color="#282828")), row=b_x, col=b_y)
     ec = []
     if(PARAMS.csl_type == "curved"):
         for p in data["p_kpa"]:
@@ -101,7 +103,7 @@ def plot_graph(event):
     fig.add_trace(go.Scatter(x=data["p_kpa"], y=data["e"], visible=True, name="Loading Path", showlegend=False, line=dict(color="#282828")), row=c_x, col=c_y)
 
     # Slider-controlled traces
-    for k, step in enumerate(data_choose(data["step"], slide_steps)):
+    for k, step in enumerate(data_choose_log(data["step"], slide_steps)):
         p_yield, q_yield = yield_curve(data["p_i_kpa"][step], data["Mi"][step])
         if max(p_yield) > p_max:
             p_max = max(p_yield)
@@ -170,24 +172,40 @@ def plot_graph(event):
         ),
             row=a_x, col=a_y
         )
-
-        fig.add_trace(go.Scatter(
-            visible=False,
-            name="Current State",
-            mode="markers",
-            marker=dict(
-                size=12,
-                symbol="circle-open",
-                color="red",
-                line=dict(width=2)
+        if PARAMS.drainage == "drained":
+            fig.add_trace(go.Scatter(
+                visible=False,
+                name="Current State",
+                mode="markers",
+                marker=dict(
+                    size=12,
+                    symbol="circle-open",
+                    color="red",
+                    line=dict(width=2)
+                ),
+                showlegend=False,
+                x=[data["eps1_pct"][step]],
+                y=[data["epsv_pct"][step]]
             ),
-            showlegend=False,
-            x=[data["eps1_pct"][step]],
-            y=[data["epsv_pct"][step]]
-        ),
-            row=b_x, col=b_y
-        )
-
+                row=b_x, col=b_y
+            )
+        elif PARAMS.drainage == "undrained":
+            fig.add_trace(go.Scatter(
+                visible = False,
+                name = "Current State",
+                mode="markers",
+                marker=dict(
+                    size=12,
+                    symbol="circle-open",
+                    color="red",       
+                    line=dict(width=2)
+                ),
+                showlegend=False,
+                x = [data["eps1_pct"][step]],
+                y = [pressure[step]]
+            ),
+            row=b_x, col=b_y            
+            )
         fig.add_trace(go.Scatter(
             visible=False,
             name="Current State",
@@ -238,16 +256,23 @@ def plot_graph(event):
     v_buffer = 0.15 * (max(data["epsv_pct"]) - min(data["epsv_pct"]))
     a_range = [min(data["eps1_pct"]), max(data["eps1_pct"])]
     lnp_range = np.log10([min(data["p_kpa"]), max(data["p_kpa"])]) #compensates for plotly only accepting log axis ranges in log10
+    pr_range = [min(pressure), max(pressure)]
+    pr_buffer = 0.15 * (max(pressure) - min(pressure))
 
     fig.update_yaxes(title_text="Deviatoric stress, q (kPa)", range=[0, 2.5 * q_max], row=main_x, col=main_y)
     fig.update_xaxes(title_text="Mean effective stress, p' (kPa)", range=[0, 1.15 * p_max], row=main_x, col=main_y)
 
     fig.update_yaxes(title_text="q (kPa)", range=[q_range[0], q_range[1] + q_buffer], row=a_x, col=a_y)
-    fig.update_yaxes(title_text="Volumetric strain, ε<sub>V</sub> (%)", range=[v_range[0], v_range[1] + v_buffer], row=b_x, col=b_y)
-    fig.update_yaxes(title_text="Void ratio, e", range=[ec_range[0] - ec_buffer, ec_range[1] + ec_buffer], row=c_x, col=c_y)
-
     fig.update_xaxes(title_text="Axial strain, ε<sub>1</sub> (%)", title_standoff=0, range=a_range, row=a_x, col=a_y)
-    fig.update_xaxes(title_text="Axial strain, ε<sub>1</sub> (%)", title_standoff=0, range=a_range, row=b_x, col=b_y)
+
+    if PARAMS.drainage == "drained":
+        fig.update_yaxes(title_text="Volumetric strain, ε<sub>V</sub> (%)", range=[v_range[0], v_range[1] + v_buffer], row=b_x, col=b_y)
+        fig.update_xaxes(title_text="Axial strain, ε<sub>1</sub> (%)", title_standoff=0, range=a_range, row=b_x, col=b_y)
+    elif PARAMS.drainage == "undrained":
+        fig.update_yaxes(title_text="Pore-pressure, Δu (kPa)", range=[pr_range[0], pr_range[1] + pr_buffer], row=b_x, col=b_y)
+        fig.update_xaxes(title_text="Axial strain, ε<sub>1</sub> (%)", title_standoff=0, range=a_range, row=b_x, col=b_y)
+
+    fig.update_yaxes(title_text="Void ratio, e", range=[ec_range[0] - ec_buffer, ec_range[1] + ec_buffer], row=c_x, col=c_y)
     fig.update_xaxes(title_text="Mean effective stress, p'(kPa, log scale)", type="log", range=lnp_range, title_standoff=0, row=c_x, col=c_y)
 
     fig.update_layout(

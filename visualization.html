@@ -17,10 +17,12 @@
 
   <header class="site-header">
     <div class="site-header__inner">
-      <span class="site-header__logo">NorSand Lab</span>
+      <span class="site-header__logo"><img src="img/norsand-logo.svg" alt="NorSand Lab" style="height: 50px;"></span>
       <nav class="site-header__nav">
         <a href="./index.html">Learn</a>
         <a href="./visualization.html" aria-current="page">Visualizations</a>
+        <a href="./about.html">About</a>
+        <a href="./team.html">Team</a>
       </nav>
     </div>
   </header>
@@ -46,7 +48,7 @@
           </div>
 
           <div class="param-field">
-            <label for="max-strain"><span class="param-symbol">&epsilon;<sub>1,max</sub></span> &ndash; target axial strain</label>
+            <label for="max-strain"><span class="param-symbol"><i>&#949;<sub>1,max</sub></i></span> &ndash; target axial strain</label>
             <input type="number" id="max-strain" value=22 name="max-strain" step="any">
             <span class="param-unit">%</span>
           </div>
@@ -62,24 +64,19 @@
           <div class="param-group__title">Initial state</div>
 
           <div class="param-field">
-            <label for="p0"><span class="param-symbol">p&prime;<sub>0</sub></span> &ndash; initial mean effective stress</label>
+            <label for="p0"><span class="param-symbol"><i>p<span class="supsub"><sup>&prime;</sup><sub>0</sub></span></i></span> &ndash; initial mean effective stress</label>
             <input type="number" id="p0" value=410 name="p0" step="any">
             <span class="param-unit">kPa</span>
           </div>
 
           <div class="param-field">
-            <label for="psi0"><span class="param-symbol">&psi;<sub>0</sub></span> &ndash; initial state parameter</label>
+            <label for="psi0"><span class="param-symbol"><i>&psi;<sub>0</sub></i></span> &ndash; initial state parameter</label>
             <input type="number" id="psi0" value=-0.158 name="psi0" step="any">
           </div>
 
           <div class="param-field">
             <label for="ocr"><span class="param-symbol">OCR</span> &ndash; over-consolidation ratio</label>
             <input type="number" id="ocr" value=1.1 name="ocr" step="any">
-          </div>
-
-          <div class="param-field">
-            <label for="eta0"><span class="param-symbol">eta<sub>0</sub></span> &ndash; initial stress ratio</label>
-            <input type="number" id="eta0" value=0 name="eta0" step="any">
           </div>
         </div>
 
@@ -95,37 +92,36 @@
 
           <div class="param-subgroup param-hidden" id="csl-semilog-fields">
             <div class="param-field">
-              <label for="gamma"><span class="param-symbol">&Gamma;</span> &ndash; reference void ratio</label>
-              <input type="number" id="gamma" value=86 name="gamma" step="any">
-              <span class="param-unit">%</span>
+              <label for="gamma"><span class="param-symbol"><i>&Gamma;</i></span> &ndash; reference void ratio</label>
+              <input type="number" id="gamma" value=0.9 name="gamma" step="any">
             </div>
 
             <div class="param-field">
-              <label for="lambda"><span class="param-symbol">&lambda; / &lambda;<sub>10</sub></span> &ndash; CSL slope</label>
+              <label for="lambda"><span class="param-symbol"><i>&lambda;</i></span> &ndash; CSL slope</label>
               <input type="number" id="lambda" value=0.07 name="lambda" step="any">
             </div>
           </div>
 
           <div class="param-subgroup" id="csl-curved-fields">
             <div class="param-field">
-              <label for="ca"><span class="param-symbol">C<sub>a</sub></span></label>
+              <label for="ca"><span class="param-symbol"><i>C<sub>a</sub></i></span></label>
               <input type="number" id="ca" value=1.01 name="ca" step="any">
             </div>
 
             <div class="param-field">
-              <label for="cb"><span class="param-symbol">C<sub>b</sub></span></label>
+              <label for="cb"><span class="param-symbol"><i>C<sub>b</sub></i></span></label>
               <input type="number" id="cb" value=0.087 name="cb" step="any">
             </div>
 
             <div class="param-field">
-              <label for="cc"><span class="param-symbol">C<sub>c</sub></span></label>
+              <label for="cc"><span class="param-symbol"><i>C<sub>c</sub></i></span></label>
               <input type="number" id="cc" value=0.38 name="cc" step="any">
             </div>
           </div>
 
           <div class="param-subgroup">
             <div class="param-field">
-              <label for="mtc"><span class="param-symbol">M / M<sub>tc</sub></span> &ndash; critical friction ratio</label>
+              <label for="mtc"><span class="param-symbol"><i>M / M<sub>tc</sub></i></span> &ndash; critical friction ratio</label>
               <input type="number" id="mtc" value=1.45 name="mtc" step="any">
             </div>
             <div class="param-field">
@@ -140,27 +136,27 @@
           <div class="param-group__title">Plasticity</div>
 
           <div class="param-field">
-            <label for="n_param"><span class="param-symbol">N</span> &ndash; volumetric coupling parameter</label>
+            <label for="n_param"><span class="param-symbol"><i>N</i></span> &ndash; volumetric coupling parameter</label>
             <input type="number" id="n_param" value=0.45 name="n_param" step="any">
           </div>
 
           <div class="param-field">
-            <label for="chi-tc"><span class="param-symbol">&chi;<sub>tc</sub></span> &ndash; dilatancy constant</label>
+            <label for="chi-tc"><span class="param-symbol"><i>&chi;<sub>tc</sub></i></span> &ndash; dilatancy constant</label>
             <input type="number" id="chi-tc" value=5.3 name="chi-tc" step="any">
           </div>
 
           <div class="param-field">
-            <label for="h0"><span class="param-symbol">H<sub>0</sub></span> &ndash; hardening modulus</label>
+            <label for="h0"><span class="param-symbol"><i>H<sub>0</sub></i></span> &ndash; hardening modulus</label>
             <input type="number" id="h0" value=61 name="h0" step="any">
           </div>
 
           <div class="param-field">
-            <label for="hy"><span class="param-symbol">H<sub>y</sub></span> &ndash; hardening modulus</label>
+            <label for="hy"><span class="param-symbol"><i>H<sub>y</sub></i></span> &ndash; hardening modulus</label>
             <input type="number" id="hy" value=247 name="hy" step="any">
           </div>
 
           <div class="param-field">
-            <label for="s_param"><span class="param-symbol">S</span> &ndash; additional softening</label>
+            <label for="s_param"><span class="param-symbol"><i>S</i></span> &ndash; additional softening</label>
             <input type="number" id="s_param" value=0 name="s_param" step="any">
           </div>
         </div>
@@ -170,18 +166,18 @@
           <div class="param-group__title">Elasticity</div>
 
           <div class="param-field">
-            <label for="gref"><span class="param-symbol">G<sub>ref</sub></span> &ndash; reference shear modulus</label>
+            <label for="gref"><span class="param-symbol"><i>G<sub>ref</sub></i></span> &ndash; reference shear modulus</label>
             <input type="number" id="gref" value=22900 name="gref" step="any">
             <span class="param-unit">kPa</span>
           </div>
 
           <div class="param-field">
-            <label for="m_exp"><span class="param-symbol">m</span> &ndash; stiffness exponent</label>
+            <label for="m_exp"><span class="param-symbol"><i>m</i></span> &ndash; stiffness exponent</label>
             <input type="number" id="m_exp" value=0.47 name="m_exp" step="any">
           </div>
 
           <div class="param-field">
-            <label for="nu"><span class="param-symbol">&nu;</span> &ndash; Poisson&rsquo;s ratio</label>
+            <label for="nu"><span class="param-symbol"><i>&nu;</i></span> &ndash; Poisson&rsquo;s ratio</label>
             <input type="number" id="nu" value=0.2 name="nu" step="any">
           </div>
         </div>

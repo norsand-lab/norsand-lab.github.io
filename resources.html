@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorSand Lab</title>
+  <link href="https://fonts.googleapis.com/css?family=Inclusive+Sans&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=JetBrains+Mono&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Serif&display=swap" rel="stylesheet" />
+  <link href="css/main.css" rel="stylesheet" />
+</head>
+<body>
+<header class="site-header">
+    <div class="site-header__inner">
+      <span class="site-header__logo"><img src="img/norsand-logo.svg" alt="NorSand Lab" style="height: 50px;"></span>
+      <nav class="site-header__nav">
+        <a href="./index.html">Learn</a>
+        <a href="./visualization.html">Visualizations</a>
+        <a href="./about.html">About</a>
+        <a href="./team.html">Team</a>
+        <a href="./resources.html" aria-current="page">Resources</a>
+      </nav>
+    </div>
+</header>
+<div class="layout">
+  <aside class="sidebar">
+      <nav class="sidebar__nav" aria-label="Page sections">
+
+        <p class="sidebar__eyebrow">Foundational papers</p>
+        <ul class="sidebar__list">
+          <li><a href="#bj1985">Been & Jefferies (1985), "A state parameter for sands"</a></li>
+          <li><a href="#bjh1991">Been, Jefferies & Hachey (1991), "The critical state of sands"</a></li>
+          <li><a href="#j1993">Jefferies (1993), "Nor-Sand: a simple critical state model for sand"</a></li>
+          <li><a href="#js2002">Jefferies & Shuttle (2002), "Dilatancy in general Cambridge-type models"</a></li>
+          <li><a href="#js2011">Jefferies & Shuttle (2011), "On the operating critical friction ratio in general stress states"</a></li>
+        </ul>
+
+        <p class="sidebar__eyebrow">Continue learning</p>
+        <ul class="sidebar__list">
+          <li><a href="#liquefaction-book">Soil Liquefaction: A Critical State Approach, 2nd ed</a></li>
+          <li><a href="#itascadoc">NorSand Model — Theory & Formulation</a></li>
+          <li><a href="#issmge2023">On the Calibration and Application of the NorSand Model</a></li>
+          <li><a href="#state-param-nature">On the fundamental nature of the state parameter</a></li>
+          <li><a href="#description-calibration">NorSand: description, calibration, validation and applications.</a></li>
+        </ul>
+
+        <p class="sidebar__eyebrow">Software implementations</p>
+        <ul class="sidebar__list">
+          <li><a href="#sigmaw">GeoStudio SIGMA/W</a></li>
+          <li><a href="#flac3d">FLAC3D</a></li>
+          <li><a href="#rs2">RS2</a></li>
+        </ul>
+
+        <p class="sidebar__eyebrow">Professional societies</p>
+        <ul class="sidebar__list">
+          <li><a href="#issmge">International Society for Soil Mechanics and Geotechnical Engineering</a></li>
+          <li><a href="#cgs">Canadian Geotechnical Society</a></li>
+        </ul>
+      </nav>
+  </aside>
+  <main class="content">
+    <h1>Resources</h1>
+    <p>This page is a starting set of references for anyone who wants to go deeper into critical state soil mechanics and the NorSand model.  It contains further reading material about concepts and technical details, software implementations of NorSand, and links to geotechnical professional societies.</p>
+
+    <div class="resource-section">
+      <h2 class="resource-section__title">Foundational papers</h2>
+      <p class="resource-section__desc">The core texts behind critical state soil mechanics and the NorSand formulation.</p>
+      <div class="resource-grid">
+
+        <article class="resource-card" id="bj1985">
+          <p class="resource-card__title"><a href="https://www.emerald.com/jgeot/article-abstract/35/2/99/400648/A-state-parameter-for-sands?redirectedFrom=fulltext" target="_blank" rel="noopener">Been & Jefferies (1985), "A state parameter for sands"</a> <span class="arrow">&#8599;</span></p>
+          <p class="resource-card__domain">Géotechnique 35(2), 99–112</p>
+          <p class="resource-card__desc">Introduces the state parameter ψ, a single measure combining void ratio and stress level relative to the critical state line to characterize sand behavior.</p>
+        </article>
+
+        <article class="resource-card" id="bjh1991">
+          <p class="resource-card__title"><a href="https://www.emerald.com/jgeot/article-abstract/41/3/365/400042/The-critical-state-of-sands?redirectedFrom=fulltext" target="_blank" rel="noopener">Been, Jefferies & Hachey (1991), "The critical state of sands"</a> <span class="arrow">&#8599;</span></p>
+          <p class="resource-card__domain">Géotechnique 41(3), 365–381</p>
+          <p class="resource-card__desc">Examines a uniformly graded quartzitic sand to resolve conflicting evidence about whether "critical state" and "steady state" are the same thing, finding they coincide and are independent of stress path, sample preparation, and initial density.</p>
+        </article>
+
+        <article class="resource-card" id="j1993">
+          <p class="resource-card__title"><a href="https://www.emerald.com/jgeot/article-abstract/43/1/91/401091/Nor-Sand-a-simle-critical-state-model-for-sand?redirectedFrom=fulltext" target="_blank" rel="noopener">Jefferies (1993), "Nor-Sand: a simple critical state model for sand"</a> <span class="arrow">&#8599;</span></p>
+          <p class="resource-card__domain">Géotechnique 43(1), 91–103</p>
+          <p class="resource-card__desc">Develops NorSand, a generalized Cambridge-type constitutive model for sand from critical state axioms, using an "image point" on the yield surface tied to the state parameter to define hardening, instead of coupling yield surface size directly to void ratio.</p>
+        </article>
+
+        <article class="resource-card" id="js2002">
+          <p class="resource-card__title"><a href="https://www.emerald.com/jgeot/article-abstract/52/9/625/436121/Dilatancy-in-general-Cambridge-type-models?redirectedFrom=fulltext" target="_blank" rel="noopener">Jefferies & Shuttle (2002), "Dilatancy in general Cambridge-type models"</a> <span class="arrow">&#8599;</span></p>
+          <p class="resource-card__domain">Géotechnique 52(9), 625–638</p>
+          <p class="resource-card__desc">Shows that Cambridge-type models (Cam-clay, NorSand, etc.) produce inconsistent, sometimes physically implausible plastic strain rates when extended from triaxial to general 3D stress states, and fixes this with a work-conjugate strain measure plus interpolation between the triaxial compression/extension limits.</p>
+        </article>
+
+        <article class="resource-card" id="js2011">
+          <p class="resource-card__title"><a href="https://www.emerald.com/jgeot/article-abstract/61/8/709/401440/On-the-operating-critical-friction-ratio-in?redirectedFrom=fulltext" target="_blank" rel="noopener">Jefferies & Shuttle (2011), "On the operating critical friction ratio in general stress states"</a> <span class="arrow">&#8599;</span></p>
+          <p class="resource-card__domain">Géotechnique 61(8), 709–713</p>
+          <p class="resource-card__desc">Proposes a function for stress-dilatancy scaling based on an "operating" friction ratio, M<sub>i</sub>, derived from work-conjugate stress and strain invariants rather than the final critical friction ratio alone. It shows this scaling coefficient evolves through loading and only reaches the true critical friction ratio at large strain.</p>
+        </article>
+      </div>
+
+      <div class="resource-section">
+      <h2 class="resource-section__title">Continue learning</h2>
+      <p class="resource-section__desc">Explains concepts behind NorSand and practical implementation. All except for the first one are available for free online</p>
+      <div class="resource-grid">
+
+        <article class="resource-card" id="liquefaction-book">
+          <p class="resource-card__title"><a href="https://www.taylorfrancis.com/books/mono/10.1201/b19114/soil-liquefaction-mike-jefferies-ken" target="_blank" rel="noopener">Jefferies, M. G., and Been, K. (2015). Soil Liquefaction: A Critical State Approach, 2nd ed</a> <span class="arrow">&#8599;</span></p>
+          <p class="resource-card__domain">CRC Press</p>
+          <p class="resource-card__desc">Outlines a complete theoretical-to-practical pipeline for liquefaction engineering, structured around the state parameter ψ and the NorSand model. Comprehensive book about the theory and practice of NorSand</p>
+        </article>
+
+        <article class="resource-card" id="itascadoc">
+          <p class="resource-card__title"><a href="https://docs.itascacg.com/3dec700/common/models/norsand/doc/modelnorsand.html" target="_blank" rel="noopener">NorSand Model &mdash; Theory &amp; Formulation</a> <span class="arrow">&#8599;</span></p>
+          <p class="resource-card__domain">docs.itascacg.com</p>
+          <p class="resource-card__desc">Short derivation of the elasticity, yield surface, hardening rule, and state parameter. Also contains a glossary of model properties.</p>
+        </article>
+
+        <article class="resource-card" id="issmge2023">
+          <p class="resource-card__title"><a href="https://www.issmge.org/uploads/publications/51/119/NUMGE2023-242.pdf" target="_blank" rel="noopener">On the Calibration and Application of the NorSand Model</a> <span class="arrow">&#8599;</span></p>
+          <p class="resource-card__domain">issmge.org &middot; NUMGE 2023</p>
+          <p class="resource-card__desc">Covers the 3D formulation and calibration workflow, including guidance from Jefferies &amp; Shuttle (2005) on fitting parameters to lab data.</p>
+        </article>
+
+        <article class="resource-card" id="state-param-nature">
+          <p class="resource-card__title"><a href="https://www.emerald.com/jgeot/article/72/12/1082/458859" target="_blank" rel="noopener">Jefferies M (2022), "On the fundamental nature of the state parameter"</a> <span class="arrow">&#8599;</span></p>
+          <p class="resource-card__domain">Geotechnique 72(12), 1082–1091</p>
+          <p class="resource-card__desc">Theoretical grounding for the state parameter ψ. Argues that ψ's control over soil strength isn't just an empirical correlation but a formal mathematical consequence of Casagrande's classic void-ratio/strength framework</p>
+        </article>
+
+        <article class="resource-card" id="description-calibration">
+          <p class="resource-card__title"><a href="https://www.emerald.com/jgeot/article/72/12/1082/458859" target="_blank" rel="noopener">Shuttle, Dawn & Jefferies, Mike. (2005). NORSAND: DESCRIPTION, CALIBRATION, VALIDATION AND APPLICATIONS.</a> <span class="arrow">&#8599;</span></p>
+          <p class="resource-card__domain"></p>
+          <p class="resource-card__desc">A reference text for engineers. It explains the model’s limits, methods for calibrating its parameters from tests, and validates its performance before demonstrating applications in numerical/finite-element analyses</p>
+        </article>
+      </div>
+
+    <div class="resource-section">
+      <h2 class="resource-section__title">Software implementations</h2>
+      <p class="resource-section__desc">NorSand as implemented in commercial geotechnical software.</p>
+      <div class="resource-grid">
+
+        <article class="resource-card" id="sigmaw">
+          <p class="resource-card__title"><a href="https://www.seequent.com/sigma-w-material-model-series-norsand/" target="_blank" rel="noopener">GeoStudio SIGMA/W</a> <span class="arrow">&#8599;</span></p>
+          <p class="resource-card__domain">seequent</p>
+          <p class="resource-card__desc">SIGMA/W is the finite-element stress/deformation analysis program in GeoStudio. It uses NorSand to calculate how the soil responds as loads or boundary conditions change</p>
+        </article>
+
+        <article class="resource-card" id="flac3d">
+          <p class="resource-card__title"><a href="https://itascasoftware.com/products/flac3d/" target="_blank" rel="noopener">FLAC3D</a> <span class="arrow">&#8599;</span></p>
+          <p class="resource-card__domain">Itasca</p>
+          <p class="resource-card__desc">FLAC3D is a 3D finite-difference method program that uses NorSand, among many other models, to simulate stress-strain behaviours in 3D</p>
+        </article>
+
+        <article class="resource-card" id="rs2">
+          <p class="resource-card__title"><a href="https://www.rocscience.com/software/rs2" target="_blank" rel="noopener">RS2</a> <span class="arrow">&#8599;</span></p>
+          <p class="resource-card__domain">Rocscience</p>
+          <p class="resource-card__desc">RS2 is a finite-element stress/deformation program that analyses stability in rocks and soils.  It added NorSand in 2019 to better model liquefaction-related behavior.</p>
+        </article>
+      </div>
+    </div>
+
+    <div class="resource-section">
+      <h2 class="resource-section__title">Professional societies</h2>
+      <p class="resource-section__desc">For further reading, webinars, and the wider geotechnical community.</p>
+      <div class="resource-grid">
+
+        <article class="resource-card" id="issmge">
+          <p class="resource-card__title"><a href="https://www.issmge.org" target="_blank" rel="noopener">International Society for Soil Mechanics and Geotechnical Engineering</a> <span class="arrow">&#8599;</span></p>
+          <p class="resource-card__domain">issmge.org</p>
+          <p class="resource-card__desc">The global professional body for geotechnical engineering; hosts an online library of 3,500+ freely available publications and recorded webinars.</p>
+        </article>
+
+        <article class="resource-card" id="cgs">
+          <p class="resource-card__title"><a href="https://www.cgs.ca" target="_blank" rel="noopener">Canadian Geotechnical Society</a> <span class="arrow">&#8599;</span></p>
+          <p class="resource-card__domain">cgs.ca</p>
+          <p class="resource-card__desc">Canada's national geotechnical society and publisher of the Canadian Geotechnical Journal.</p>
+        </article>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+</div>
+</body>
+</html>

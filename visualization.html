@@ -14,23 +14,20 @@
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 </head>
 <body>
-
   <header class="site-header">
     <div class="site-header__inner">
-      <span class="site-header__logo"><img src="img/norsand-logo.svg" alt="NorSand Lab" style="height: 50px;"></span>
+      <span class="site-header__logo"><a href="./index.html"><img src="img/norsand-logo.svg" alt="NorSand Lab" style="height: 60px;"></a></span>
       <nav class="site-header__nav">
-        <a href="./index.html">Learn</a>
-        <a href="./visualization.html" aria-current="page">Visualizations</a>
-        <a href="./about.html">About</a>
-        <a href="./team.html">Team</a>
+        <a href="./index.html">Home</a>
+        <a href="./learn.html">Learn</a>
+        <a href="./visualization.html" aria-current="page">Run NorSand</a>
         <a href="./resources.html">Resources</a>
       </nav>
     </div>
   </header>
-
+  
   <div class="layout">
     <aside class="sidebar">
-      <nav class="sidebar__nav" aria-label="Page sections">
       <form class="param-panel" id="norsand-form">
 
         <p class="param-panel__intro">Set up a conventional triaxial compression case and the full NorSand parameter set, then generate the stress path, stress–strain, and volumetric/pore-pressure response.</p>
@@ -188,12 +185,11 @@
         </div>
 
       </form>
-      </nav>
     </aside>
 
     <main class="content">
       <section class="content__block">
-        <div class="viz-placeholder">
+        <div class="viz-placeholder" id="viz-placeholder">
           <div id="plotDiv">
           </div>
           <script type="py" config="./config.json" src="./gen_vis.py"></script>
@@ -206,6 +202,23 @@
     const cslFormSelect = document.getElementById('csl-form');
     const semilogFields = document.getElementById('csl-semilog-fields');
     const curvedFields = document.getElementById('csl-curved-fields');
+    const vizPanel = document.getElementById('viz-placeholder');
+    const runButton = document.getElementById('run-button');
+
+    function showLoading() {
+      vizPanel.classList.add('is-loading');
+      runButton.disabled = true;
+    }
+
+    function hideLoading() {
+      vizPanel.classList.remove('is-loading');
+      runButton.disabled = false;
+    }
+
+    window.showLoading = showLoading;
+    window.hideLoading = hideLoading;
+
+    runButton.addEventListener('click', showLoading); 
 
     cslFormSelect.addEventListener('change', () => {
       const isCurved = cslFormSelect.value === 'curved';

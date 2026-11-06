@@ -56,6 +56,7 @@ async def plot_graph(event):
         n_steps=int(document.getElementById("max-steps").value),     # matches MATLAB validated history export
         )
         df = run_triaxial(PARAMS)
+        window.setCsvData(df.to_csv(index=False))
         data = df.to_dict(orient="list")
         mtc = PARAMS.mtc                # CSL slope
         slide_steps = 18                # number of slider steps

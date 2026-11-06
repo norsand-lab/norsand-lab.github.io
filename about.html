@@ -14,37 +14,63 @@
 
   <header class="site-header">
     <div class="site-header__inner">
-      <span class="site-header__logo"><img src="img/norsand-logo.svg" alt="NorSand Lab" style="height: 50px;"></span>
+      <span class="site-header__logo"><a href="./index.html"><img src="img/norsand-logo.svg" alt="NorSand Lab"></a></span>
       <nav class="site-header__nav">
-        <a href="./index.html">Learn</a>
+        <a href="./index.html">Home</a>
+        <a href="./learn.html">Learn</a>
         <a href="./visualization.html">Visualizations</a>
-        <a href="./about.html" aria-current="page">About</a>
-        <a href="./team.html">Team</a>
+        <a href="./calibration.html">Calibrate</a>
         <a href="./resources.html">Resources</a>
+        <a href="./about.html" aria-current="page">About</a>
       </nav>
     </div>
   </header>
 
   <div class="layout">
-    <main class="content-about">
-        <h1>About the website</h1>
-        <section id="about" class="content__block">
-          <h2>Our mission</h2>
-          <p>NorSnad Labs is an educational initiative focused on making NorSand more accessible. Some NorSand concepts such as the state parameter, image point, internal cap, limiting yield surface, dilatancy, and yield-surface evolution can be difficult to understand from equations and static diagrams alone. Here, these concepts are explained gradually and connected to interactive visualizations of conventional triaxial tests. The purpose of this website is to make these ideas easier to learn.</p>
-          <p>The website is organized around three goals:</p>
+    <main class="content-home">
+      <section class="home-section">
+        <aside class="home-panel">
+        <p><strong>Mission</strong></p>
+        <ol type="I">
+          <li><strong>Learn</strong> the basic ideas of Critical State Soil Mechanics and NorSand and to provide a jumping off point for further education.</li>
+          <li><strong>Visualize</strong> how stress, volume, state, dilatancy, and the NorSand yield surface evolve during loading by applying the model through validated examples</li>
+          <li>Aid in the <strong>application</strong> of NorSand through reproducible implementation and calibration resources.</li>
+        </ol>
+        </aside>
+        <p class="home__title">About the website</p>
+        <h1>NorSand Labs is an educational initiative focused on making NorSand more accessible</h1>
+        <p>Some NorSand concepts can be difficult to understand from equations and static diagrams alone. Here, these concepts are explained gradually and connected to interactive visualizations of conventional triaxial tests.</p>
+        <p>NorSand Lab is intended to support continued research, collaboration, and development within the geotechnical engineering community.</p>
+      </section>
+      </section>
+      <section class="home-section home-section--dark">
+        <p class="home__title">Team</p>
+          <h1>Our team is from the Geomechanics and System Resilience Laboratory (GeoSRL)</h1>
+          <p>GeoSRL is a group situated in McGill university with a focus on the multi-scale analyses of natural and human-induced disasters. Please visit our <u><a href="https://www.mcgill.ca/geomechanics-system-lab">website</a></u></p>
           <ul>
-            <li>Learn the basic ideas of Critical State Soil Mechanics and NorSand and to provide a jumping off point for further education.</li>
-            <li>Visualize how stress, volume, state, dilatancy, and the NorSand yield surface evolve during loading by applying the model through validated examples</li>
-            <li>Aid in the application of NorSand through reproducible implementation and calibration resources.</li>
+            <li><strong>Dr. Fangzhou (Albert) Liu</strong>, Associate Professor, Department of Civil Engineering, McGill University <u><a href="mailto:fangzhou.liu@mcgill.ca">Email</a></u></li>
+            <li><strong>Dr. Ekansh Agarwal</strong>, Postdoctoral Researcher, Department of Civil Engineering, McGill University <u><a href="mailto:ekansh.agarwal@mcgill.ca">Email</a></u></li>
+            <li><strong>Jack Dai</strong>, Undergraduate, Bachelor of Technology, McMaster University <u><a href="mailto:daij44@mcmaster.ca">Email</a></u></li>
           </ul>
-          NorSand Lab is intended to support continued research, collaboration, and development within the geotechnical engineering community.
         </section>
-        <section id="about" class="content__block">
-          <h2>Current scope and vision</h2>
-          <p>The current version should be interpreted as a learning and research visualization tool for monotonic CID and CIU triaxial compression. It is not yet a general three-dimensional NorSand implementation. At this stage, the website does not cover arbitrary stress paths, principal-stress rotation, triaxial extension, plane-strain loading, cyclic loading, or general finite-element stress integration. These capabilities may be considered in future stages of the project.</p>
-        </section>
+        <section class="home-section">
+        <p class="home__title">Current Scope and Vision</p>
+        <h1>The current version should be interpreted as a learning and research visualization tool for monotonic CID and CIU triaxial compression.</h1>
+        <p>It is not yet a general three-dimensional NorSand implementation. At this stage, the website does not cover arbitrary stress paths, principal-stress rotation, triaxial extension, plane-strain loading, cyclic loading, or general finite-element stress integration. These capabilities may be considered in future stages of the project.</p>
+      </section>
     </main>
   </div>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p class="site-footer__copyright">&copy; 2026 NorSand Lab, GeoSRL, McGill University. All rights reserved.</p>
+      <address class="site-footer__contact">
+        <span><strong>Phone</strong> <a href="tel:+10000000000">+1 (000) 000-0000</a></span>
+        <span><strong>Address</strong> Department of Civil Engineering, McGill University, 817 Sherbrooke St W, Montreal, QC H3A 0C3</span>
+        <span><strong>Email</strong> <a href="mailto:fangzhou.liu@mcgill.ca">fangzhou.liu@mcgill.ca</a></span>
+      </address>
+    </div>
+  </footer>
 
 </body>
 </html>

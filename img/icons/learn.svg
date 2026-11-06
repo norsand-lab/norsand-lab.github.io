@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="#B28C35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <!-- open book -->
+  <path d="M32 18 C26 14 16 13 7 15 V49 C16 47 26 48 32 52 Z"/>
+  <path d="M32 18 C38 14 48 13 57 15 V49 C48 47 38 48 32 52"/>
+  <!-- text lines on the left page -->
+  <path d="M12 23 C17 22 22 22.5 27 24" stroke-width="2"/>
+  <path d="M12 30 C17 29 22 29.5 27 31" stroke-width="2"/>
+  <path d="M12 37 C17 36 22 36.5 27 38" stroke-width="2"/>
+  <!-- critical state line sketch on the right page -->
+  <path d="M37 22 V42 H52" stroke-width="2"/>
+  <path d="M39 25 C42 33 46 37 52 39" stroke-width="2"/>
+</svg>

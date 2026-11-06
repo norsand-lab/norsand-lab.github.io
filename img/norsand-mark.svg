@@ -70,7 +70,7 @@
      stroke-linecap="round"
      id="line2" />
   <path
-     d="M 14.917206,48.586029 46.834411,17.73868"
+     d="M 14.917206,48.586029 35.326003,13.433375"
      fill="none"
      stroke="#1d4ed8"
      stroke-width="3.2"
@@ -78,9 +78,9 @@
      stroke-linejoin="round"
      id="path2"
      sodipodi:nodetypes="cc"
-     style="stroke-dasharray:3.2, 6.4;stroke-dashoffset:0" />
+     style="stroke-dasharray:1.6, 4.8;stroke-dashoffset:0" />
   <path
-     d="m 14.914359,48.752652 c 2.943079,-7.709573 9.15049,-19.031464 17.579561,-18.808537 8.046909,0.212819 15.285899,10.589909 17.980595,18.926261"
+     d="m 14.914359,48.752652 c 1.866753,-7.875162 2.629088,-15.423094 8.472187,-19.388098 7.921561,-5.375405 19.011643,9.927555 27.087969,19.505822"
      fill="none"
      stroke="#1d4ed8"
      stroke-width="3.2"
@@ -90,8 +90,8 @@
      style="stroke:#63430a;stroke-opacity:1"
      sodipodi:nodetypes="csc" />
   <circle
-     cx="34.152653"
-     cy="30.357052"
+     cx="26.369987"
+     cy="28.452782"
      r="4.1999998"
      fill="#16a34a"
      stroke="#f8faff"

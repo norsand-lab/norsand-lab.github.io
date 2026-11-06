@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorSand Lab</title>
+  <link href="https://fonts.googleapis.com/css?family=Inclusive+Sans&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=JetBrains+Mono&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Serif&display=swap" rel="stylesheet" />
+  <link href="css/main.css" rel="stylesheet" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <span class="site-header__logo"><a href="./index.html"><img src="img/norsand-logo.svg" alt="NorSand Lab"></a></span>
+      <nav class="site-header__nav">
+        <a href="./index.html">Home</a>
+        <a href="./learn.html" aria-current="page">Learn</a>
+        <a href="./visualization.html">Run NorSand</a>
+        <a href="./calibration.html">Calibrate</a>
+        <a href="./resources.html">Resources</a>
+        <a href="./about.html">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="sidebar__nav" aria-label="Page sections">
+
+        <p class="sidebar__eyebrow">1. Introduction to NorSand</p>
+        <ul class="sidebar__list">
+          <li><a href="./learn.html">1.1 Understanding NorSand</a></li>
+        </ul>
+
+        <p class="sidebar__eyebrow">2. Core concepts</p>
+        <ul class="sidebar__list">
+          <li><a href="./learn-stress-variables.html">2.1 Stress variables used in triaxial loading</a></li>
+          <li><a href="./learn-critical-state-idea.html">2.2 Critical state idea</a></li>
+          <li><a href="./learn-void-ratio.html">2.3 Void ratio and soil packing</a></li>
+          <li><a href="./learn-critical-state-line.html">2.4 Critical state line</a></li>
+          <li><a href="./learn-state-parameter.html">2.5 State parameter</a></li>
+          <li><a href="./learn-yield-surface.html">2.6 NorSand yield surface</a></li>
+          <li><a href="./learn-image-point.html">2.7 Image point</a></li>
+          <li><a href="./learn-contraction-dilation.html">2.8 Contraction and dilation</a></li>
+          <li><a href="./learn-limiting-dilatancy.html">2.9 Limiting dilatancy and the internal cap</a></li>
+          <li><a href="./learn-hardening-softening.html">2.10 Hardening and softening</a></li>
+          <li><a href="./learn-elastic-stiffness.html">2.11 Elastic stiffness</a></li>
+          <li><a href="./learn-drained-undrained.html">2.12 Drained and undrained loading</a></li>
+          <li><a href="./learn-norsand-parameters.html">2.13 NorSand parameters</a></li>
+        </ul>
+
+        <p class="sidebar__eyebrow">3. Interactive simulations</p>
+        <ul class="sidebar__list">
+          <li><a href="./learn-simulation-parameters.html">3.1 Simulation parameters</a></li>
+          <li><a href="./learn-interactive-simulations.html">3.2 Interactive triaxial simulations</a></li>
+          <li><a href="./learn-validation.html">3.3 Validation</a></li>
+          <li><a href="./learn-continue-learning.html">3.4 Continue learning about NorSand</a></li>
+        </ul>
+
+        <p class="sidebar__eyebrow">&nbsp;</p>
+        <ul class="sidebar__list">
+          <li><a href="./learn-references.html">References</a></li>
+        </ul>
+
+      </nav>
+    </aside>
+
+    <main class="content">
+      <h1>2. Core concepts</h1>
+      <section id="state-parameter" class="content__block">
+        <h2>2.5 State parameter</h2>
+        <p>The state parameter is one of the most important concepts in NorSand. It was introduced by Been and Jefferies (1985) and is defined as</p>
+        <p class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>&#x3c8;</mi><mo>=</mo><mi>e</mi><mo>&#x2212;</mo><msub><mi>e</mi><mi>c</mi></msub><mrow><mo>(</mo><msup><mi>p</mi><mo lspace="0em" rspace="0em">&#x2032;</mo></msup><mo>)</mo></mrow></mrow></math></p>
+        <p>It measures the vertical distance between the current state of the soil and the critical state line at the same mean effective stress. When <math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>&#x3c8;</mi><mo>&gt;</mo><mn>0</mn></mrow></math>, the current void ratio is greater than the critical void ratio. The soil is looser than the critical state at the same effective stress; such a state generally has a stronger tendency to contract during shearing. When <math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>&#x3c8;</mi><mo>&lt;</mo><mn>0</mn></mrow></math> the current void ratio is smaller than the critical void ratio. The soil is denser than the critical state at the same effective stress; such a state generally has a stronger tendency to dilate during shearing. At critical state, <math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>&#x3c8;</mi><mo>=</mo><mn>0</mn></mrow></math>. The state parameter is useful because it combines density and effective stress in one quantity. Two specimens with the same void ratio may behave differently because they are subjected to different effective stress levels — their state parameters reveal this difference. For an initial mean effective stress <math xmlns="http://www.w3.org/1998/Math/MathML"><msubsup><mi>p</mi><mn>0</mn><mo lspace="0em" rspace="0em">&#x2032;</mo></msubsup></math>, the initial state is defined by</p>
+        <p class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>&#x3c8;</mi><mn>0</mn></msub><mo>=</mo><msub><mi>e</mi><mn>0</mn></msub><mo>&#x2212;</mo><msub><mi>e</mi><mi>c</mi></msub><mo form="prefix" stretchy="false">(</mo><msubsup><mi>p</mi><mn>0</mn><mo lspace="0em" rspace="0em">&#x2032;</mo></msubsup><mo form="postfix" stretchy="false">)</mo></mrow></math></p>
+        <p>or equivalently,</p>
+        <p class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>e</mi><mn>0</mn></msub><mo>=</mo><msub><mi>e</mi><mi>c</mi></msub><mo form="prefix" stretchy="false">(</mo><msubsup><mi>p</mi><mn>0</mn><mo lspace="0em" rspace="0em">&#x2032;</mo></msubsup><mo form="postfix" stretchy="false">)</mo><mo>+</mo><msub><mi>&#x3c8;</mi><mn>0</mn></msub><mi>.</mi></mrow></math>
+      </section>
+      <p class="page-nav">
+        <a href="./learn-critical-state-line.html">&larr; 2.4 Critical state line</a>
+        &nbsp;|&nbsp;
+        <a href="./learn-yield-surface.html">2.6 NorSand yield surface &rarr;</a>
+      </p>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p class="site-footer__copyright">&copy; 2026 NorSand Lab, GeoSRL, McGill University. All rights reserved.</p>
+      <address class="site-footer__contact">
+        <span><strong>Phone</strong> <a href="tel:+10000000000">+1 (000) 000-0000</a></span>
+        <span><strong>Address</strong> Department of Civil Engineering, McGill University, 817 Sherbrooke St W, Montreal, QC H3A 0C3</span>
+        <span><strong>Email</strong> <a href="mailto:fangzhou.liu@mcgill.ca">fangzhou.liu@mcgill.ca</a></span>
+      </address>
+    </div>
+  </footer>
+
+</body>
+</html>

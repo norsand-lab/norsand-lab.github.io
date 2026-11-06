@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorSand Lab</title>
+  <link href="https://fonts.googleapis.com/css?family=Inclusive+Sans&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=JetBrains+Mono&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Serif&display=swap" rel="stylesheet" />
+  <link href="css/main.css" rel="stylesheet" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <span class="site-header__logo"><a href="./index.html"><img src="img/norsand-logo.svg" alt="NorSand Lab"></a></span>
+      <nav class="site-header__nav">
+        <a href="./index.html">Home</a>
+        <a href="./learn.html" aria-current="page">Learn</a>
+        <a href="./visualization.html">Run NorSand</a>
+        <a href="./calibration.html">Calibrate</a>
+        <a href="./resources.html">Resources</a>
+        <a href="./about.html">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="sidebar__nav" aria-label="Page sections">
+
+        <p class="sidebar__eyebrow">1. Introduction to NorSand</p>
+        <ul class="sidebar__list">
+          <li><a href="./learn.html">1.1 Understanding NorSand</a></li>
+        </ul>
+
+        <p class="sidebar__eyebrow">2. Core concepts</p>
+        <ul class="sidebar__list">
+          <li><a href="./learn-stress-variables.html">2.1 Stress variables used in triaxial loading</a></li>
+          <li><a href="./learn-critical-state-idea.html">2.2 Critical state idea</a></li>
+          <li><a href="./learn-void-ratio.html">2.3 Void ratio and soil packing</a></li>
+          <li><a href="./learn-critical-state-line.html">2.4 Critical state line</a></li>
+          <li><a href="./learn-state-parameter.html">2.5 State parameter</a></li>
+          <li><a href="./learn-yield-surface.html">2.6 NorSand yield surface</a></li>
+          <li><a href="./learn-image-point.html">2.7 Image point</a></li>
+          <li><a href="./learn-contraction-dilation.html">2.8 Contraction and dilation</a></li>
+          <li><a href="./learn-limiting-dilatancy.html">2.9 Limiting dilatancy and the internal cap</a></li>
+          <li><a href="./learn-hardening-softening.html">2.10 Hardening and softening</a></li>
+          <li><a href="./learn-elastic-stiffness.html">2.11 Elastic stiffness</a></li>
+          <li><a href="./learn-drained-undrained.html">2.12 Drained and undrained loading</a></li>
+          <li><a href="./learn-norsand-parameters.html">2.13 NorSand parameters</a></li>
+        </ul>
+
+        <p class="sidebar__eyebrow">3. Interactive simulations</p>
+        <ul class="sidebar__list">
+          <li><a href="./learn-simulation-parameters.html">3.1 Simulation parameters</a></li>
+          <li><a href="./learn-interactive-simulations.html">3.2 Interactive triaxial simulations</a></li>
+          <li><a href="./learn-validation.html">3.3 Validation</a></li>
+          <li><a href="./learn-continue-learning.html">3.4 Continue learning about NorSand</a></li>
+        </ul>
+
+        <p class="sidebar__eyebrow">&nbsp;</p>
+        <ul class="sidebar__list">
+          <li><a href="./learn-references.html">References</a></li>
+        </ul>
+
+      </nav>
+    </aside>
+
+    <main class="content">
+      <h1>2. Core concepts</h1>
+      <section id="elastic-stiffness" class="content__block">
+        <h2>2.11 Elastic stiffness</h2>
+        <p>Before and during plastic loading, NorSand requires an elastic relationship. The formulation used for the simulations presented on this website adopts a pressure-dependent <span class="tooltip">elastic shear modulus<span class="tooltiptext">Elastic stiffness controlling recoverable shear deformation</span></span>:</p>
+        <p class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>G</mi><mo>=</mo><msub><mi>G</mi><mrow><mrow><mi mathvariant="normal">r</mi></mrow><mrow><mi mathvariant="normal">e</mi></mrow><mrow><mi mathvariant="normal">f</mi></mrow></mrow></msub><msup><mrow><mo>(</mo><mfrac><msup><mi>p</mi><mo lspace="0em" rspace="0em">&#x2032;</mo></msup><msub><mi>p</mi><mrow><mi>r</mi><mi>e</mi><mi>f</mi></mrow></msub></mfrac><mo>)</mo></mrow><mi>m</mi></msup></mrow></math></p>
+        <p>where <em>G<sub>ref</sub></em> is the shear modulus at the reference pressure, <em>G</em> is the current shear modulus, <em>m</em> controls how stiffness changes with effective stress. For example, <math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow></math> gives <math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mfrac><mi>G</mi><msup><mi>p</mi><mo lspace="0em" rspace="0em">&#x2032;</mo></msup></mfrac><mo>=</mo><mtext>constant</mtext></mrow></math>, while <math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>m</mi><mo>=</mo><mn>0.5</mn></mrow></math> gives <math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>G</mi><mo>&#x221d;</mo><msqrt><msup><mi>p</mi><mo lspace="0em" rspace="0em">&#x2032;</mo></msup></msqrt></mrow></math>. A rigidity index may also be written as:</p>
+        <p class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>I</mi><mi>r</mi></msub><mo>=</mo><mfrac><mi>G</mi><msup><mi>p</mi><mo lspace="0em" rspace="0em">&#x2032;</mo></msup></mfrac></mrow></math></p>
+        <p>It remains constant when <math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow></math>, but varies with mean effective stress for other values of <em>m</em>. The elastic parameters mainly influence the initial stiffness and the elastic part of the response, while the critical-state, dilatancy, and hardening parameters govern the subsequent elastoplastic response. <span class="tooltip">Poisson's ratio<span class="tooltiptext">Elastic parameter that relates lateral strain to axial strain during elastic deformation</span></span>, <em>ν</em>, or an equivalent bulk-modulus specification, is also required so that the elastic shear and volumetric responses are calculated consistently. The <span class="tooltip">elastic bulk modulus<span class="tooltiptext">Elastic stiffness controlling recoverable volume change due to changes in mean stress</span></span> is:</p>
+        <p class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>K</mi><mo>=</mo><mfrac><mrow><mn>2</mn><mi>G</mi><mo form="prefix" stretchy="false">(</mo><mn>1</mn><mo>+</mo><mi>&#x3bd;</mi><mo form="postfix" stretchy="false">)</mo></mrow><mrow><mn>3</mn><mo form="prefix" stretchy="false">(</mo><mn>1</mn><mo>&#x2212;</mo><mn>2</mn><mi>&#x3bd;</mi><mo form="postfix" stretchy="false">)</mo></mrow></mfrac></mrow></math></p>
+      </section>
+      <p class="page-nav">
+        <a href="./learn-hardening-softening.html">&larr; 2.10 Hardening and softening</a>
+        &nbsp;|&nbsp;
+        <a href="./learn-drained-undrained.html">2.12 Drained and undrained loading &rarr;</a>
+      </p>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p class="site-footer__copyright">&copy; 2026 NorSand Lab, GeoSRL, McGill University. All rights reserved.</p>
+      <address class="site-footer__contact">
+        <span><strong>Phone</strong> <a href="tel:+10000000000">+1 (000) 000-0000</a></span>
+        <span><strong>Address</strong> Department of Civil Engineering, McGill University, 817 Sherbrooke St W, Montreal, QC H3A 0C3</span>
+        <span><strong>Email</strong> <a href="mailto:fangzhou.liu@mcgill.ca">fangzhou.liu@mcgill.ca</a></span>
+      </address>
+    </div>
+  </footer>
+
+</body>
+</html>

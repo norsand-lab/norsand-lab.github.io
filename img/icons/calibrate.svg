@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="#B28C35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <!-- tuning slider -->
+  <!-- track stops at the knob so the knob stays hollow without a white fill -->
+  <path d="M14 11 H26.5 M33.5 11 H40" stroke-width="2"/>
+  <circle cx="30" cy="11" r="3.5"/>
+  <!-- stress–strain axes -->
+  <path d="M10 18 V54 H58"/>
+  <!-- model curve fitted to lab data -->
+  <path d="M10 54 C16 36 26 29 56 28"/>
+  <g fill="#B28C35" stroke="none">
+    <circle cx="15" cy="43" r="2.5"/>
+    <circle cx="21" cy="36" r="2.5"/>
+    <circle cx="28" cy="33" r="2.5"/>
+    <circle cx="36" cy="29" r="2.5"/>
+    <circle cx="44" cy="30" r="2.5"/>
+    <circle cx="52" cy="27" r="2.5"/>
+  </g>
+</svg>

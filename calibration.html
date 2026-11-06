@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorSand Lab</title>
+  <link href="https://fonts.googleapis.com/css?family=Inclusive+Sans&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=JetBrains+Mono&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Serif&display=swap" rel="stylesheet" />
+  <link href="css/main.css" rel="stylesheet" />
+
+  <!-- Page-specific styles for the calibration workflow. Move into css/main.css once the layout is settled. -->
+  <style>
+    /* ---------- Page container (no sidebar: the progress bar sits on top) ---------- */
+    .cal-main {
+      margin: 0 auto;
+      padding-top: 0;
+      min-width: 0;
+    }
+
+    /* ---------- Progress bar ---------- */
+    .cal-progress {
+      position: sticky;
+      top: var(--header-height);
+      z-index: 5;
+      background: var(--color-bg);
+      padding: 16px 0 12px;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .cal-progress ol {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+    }
+
+    .cal-progress li {
+      position: relative;
+    }
+
+    /* connector line between dots */
+    .cal-progress li + li::before {
+      content: "";
+      position: absolute;
+      top: 15px;
+      left: calc(-50% + 20px);
+      right: calc(50% + 20px);
+      height: 2px;
+      background: var(--color-border);
+    }
+
+    .cal-progress li.is-done::before,
+    .cal-progress li.is-current::before {
+      background: var(--color-accent);
+    }
+
+    .cal-progress button {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 0 4px;
+      border: none;
+      background: transparent;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      line-height: 1.3;
+      color: var(--color-text-muted);
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .cal-progress button:hover {
+      color: var(--color-accent);
+    }
+
+    .cal-progress__dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--color-border);
+      background: var(--color-panel);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .is-current .cal-progress__dot {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+      box-shadow: 0 0 0 4px rgba(178, 140, 53, 0.15);
+    }
+
+    .is-current button {
+      color: var(--color-text);
+      font-weight: 700;
+    }
+
+    .is-done .cal-progress__dot {
+      border-color: var(--color-accent);
+      background: var(--color-accent);
+      color: #fff;
+    }
+
+    .is-done .cal-progress__num {
+      display: none;
+    }
+
+    .is-done .cal-progress__dot::after {
+      content: "\2713";
+    }
+
+    /* ---------- Step panels ---------- */
+    .cal-step[hidden] {
+      display: none;
+    }
+
+    .cal-step__eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--color-text-faint);
+      margin: 0 0 6px;
+    }
+
+    .cal-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cal-title h1 {
+      margin: 0;
+    }
+
+    .cal-info-btn {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1.5px solid var(--color-accent);
+      background: transparent;
+      color: var(--color-accent);
+      font-family: var(--font-display);
+      font-style: italic;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      transition: background-color .15s ease, color .15s ease;
+    }
+
+    .cal-info-btn:hover,
+    .cal-info-btn[aria-expanded="true"] {
+      background: var(--color-accent);
+      color: #fff;
+    }
+
+    .cal-info {
+      max-width: 760px;
+      margin: 12px 0 0;
+      padding: 12px 16px;
+      background: var(--color-panel);
+      border: 1px solid var(--color-border);
+      border-left: 3px solid var(--color-accent);
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .cal-info[hidden] {
+      display: none;
+    }
+
+    .cal-info dt {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--color-accent);
+    }
+
+    .cal-info dd {
+      margin: 0 0 8px;
+    }
+
+    .cal-info dd:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .cal-info .equation {
+      font-size: 16px;
+      margin: 10px 0 0;
+    }
+
+    .cal-lead {
+      max-width: 760px;
+      margin: 12px 0 24px;
+      color: var(--color-text-muted);
+    }
+
+    .cal-section-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      color: var(--color-heading);
+      margin: 32px 0 12px;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .cal-section-title:first-child {
+      margin-top: 0;
+    }
+
+    .cal-section-title__tag {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--color-panel);
+      background: var(--color-accent);
+      border-radius: 4px;
+      padding: 2px 7px;
+    }
+
+    /* ---------- Small flow strip (e.g. Upload > Detect > Confirm) ---------- */
+    .cal-flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px 0;
+      list-style: none;
+      margin: 0 0 24px;
+      padding: 0;
+    }
+
+    .cal-flow li {
+      position: relative;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      padding: 4px 10px;
+      border: 1px solid var(--color-border);
+      border-radius: 999px;
+      background: var(--color-panel);
+      color: var(--color-text-muted);
+    }
+
+    .cal-flow li + li {
+      margin-left: 20px;
+    }
+
+    .cal-flow li + li::before {
+      content: "\203A";
+      position: absolute;
+      left: -14px;
+      color: var(--color-text-faint);
+    }
+
+    .cal-flow li.is-here {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+      font-weight: 700;
+    }
+
+    /* ---------- Workspace (controls, tables, plots) ---------- */
+    .cal-workspace {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+
+    .cal-workspace .param-group {
+      margin: 0;
+    }
+
+    .cal-wide {
+      grid-column: 1 / -1;
+    }
+
+    .cal-step,
+    .cal-workspace > *,
+    .cal-tune > * {
+      min-width: 0;
+    }
+
+    .cal-note {
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: var(--color-text-muted);
+      margin: 0 0 12px;
+    }
+
+    .cal-warning {
+      font-size: 13px;
+      line-height: 1.5;
+      color: rgba(146, 64, 14, 1);
+      background: rgba(217, 119, 6, 0.08);
+      border: 1px solid rgba(217, 119, 6, 0.35);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin: 0 0 16px;
+    }
+
+    .cal-formula {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--color-text-muted);
+      background: var(--color-bg);
+      border: 1px dashed var(--color-border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin: 0 0 10px;
+    }
+
+    /* ---------- Step 1: input method choice ---------- */
+    .cal-methods {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+      gap: 12px;
+      margin: 0 0 16px;
+    }
+
+    .cal-method {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 16px 18px;
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      background: var(--color-panel);
+      text-align: left;
+      cursor: pointer;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    .cal-method:hover {
+      border-color: var(--color-accent);
+    }
+
+    .cal-method[aria-selected="true"] {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(178, 140, 53, 0.18);
+    }
+
+    .cal-method__title {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--color-accent);
+    }
+
+    .cal-method__desc {
+      font-family: var(--font-body);
+      font-size: 12.5px;
+      color: var(--color-text-muted);
+    }
+
+    .cal-method-panel[hidden] {
+      display: none;
+    }
+
+    .cal-dropzone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 28px 16px;
+      border: 2px dashed var(--color-border);
+      border-radius: 10px;
+      background: var(--color-bg);
+      text-align: center;
+      font-family: var(--font-ui);
+      font-size: 13px;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: border-color .15s ease;
+    }
+
+    .cal-dropzone:hover,
+    .cal-dropzone.is-dragover {
+      border-color: var(--color-accent);
+    }
+
+    .cal-dropzone input[type="file"] {
+      max-width: 100%;
+      font-family: var(--font-ui);
+      font-size: 12px;
+    }
+
+    .cal-filename {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--color-accent);
+      min-height: 1em;
+    }
+
+    .cal-textarea {
+      width: 100%;
+      min-height: 140px;
+      padding: 8px 10px;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      resize: vertical;
+    }
+
+    /* ---------- Tables ---------- */
+    .cal-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .cal-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-ui);
+      font-size: 12.5px;
+    }
+
+    .cal-table th,
+    .cal-table td {
+      padding: 7px 8px;
+      border-bottom: 1px solid var(--color-border);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    /* No uppercase here: it would turn symbols like e, η and ψ into E, Η and Ψ. */
+    .cal-table th {
+      font-size: 11.5px;
+      color: var(--color-text-faint);
+      font-weight: 700;
+    }
+
+    .cal-table td.num {
+      font-family: var(--font-mono);
+      text-align: right;
+    }
+
+    .cal-table tr.cal-table__group td {
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--color-accent);
+      padding-top: 14px;
+    }
+
+    .cal-table input[type="number"],
+    .cal-table input[type="text"],
+    .cal-table select {
+      width: 90px;
+      padding: 4px 6px;
+      border: 1px solid var(--color-border);
+      border-radius: 5px;
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .cal-table select {
+      width: auto;
+      min-width: 150px;
+      font-family: var(--font-ui);
+    }
+
+    .cal-table select:disabled {
+      opacity: 0.7;
+    }
+
+    .cal-table__empty td {
+      color: var(--color-text-faint);
+      font-style: italic;
+      text-align: center;
+      white-space: normal;
+    }
+
+    .cal-output {
+      font-family: var(--font-mono);
+      color: var(--color-accent);
+      text-align: right;
+      min-width: 84px;
+    }
+
+    .cal-mapping-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .cal-mapping-status {
+      font-family: var(--font-ui);
+      font-size: 12.5px;
+      color: rgba(21, 128, 61, 1);
+    }
+
+    /* ---------- Step 2: test cards ---------- */
+    .cal-test-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr));
+      gap: 12px;
+    }
+
+    .cal-test-card {
+      position: relative;
+      padding: 14px 16px;
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      background: var(--color-panel);
+      cursor: pointer;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    .cal-test-card:hover {
+      border-color: var(--color-accent);
+    }
+
+    .cal-test-card.is-selected {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(178, 140, 53, 0.18);
+    }
+
+    .cal-test-card.is-example {
+      opacity: 0.75;
+    }
+
+    .cal-test-card__id {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--color-text);
+    }
+
+    .cal-test-card__meta {
+      font-family: var(--font-ui);
+      font-size: 12.5px;
+      color: var(--color-text-muted);
+      margin: 2px 0 10px;
+    }
+
+    .cal-test-card .badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+    }
+
+    /* ---------- Plots ---------- */
+    .cal-plot-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+      gap: 16px;
+    }
+
+    .cal-plot-grid--stack {
+      grid-template-columns: 1fr;
+    }
+
+    .cal-plot {
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 16px;
+      border: 1px dashed var(--color-border);
+      border-radius: 12px;
+      background: var(--color-panel);
+      text-align: center;
+      color: var(--color-text-faint);
+      font-size: 13px;
+    }
+
+    .cal-plot--tall {
+      min-height: 440px;
+    }
+
+    .cal-plot__title {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      color: var(--color-text-muted);
+    }
+
+    .cal-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-family: var(--font-ui);
+      font-size: 12.5px;
+      color: var(--color-text-muted);
+      margin: 0 0 12px;
+    }
+
+    .cal-legend__lab::before,
+    .cal-legend__model::before {
+      content: "";
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    .cal-legend__lab::before {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-text-muted);
+    }
+
+    .cal-legend__model::before {
+      width: 18px;
+      height: 2px;
+      background: var(--color-accent);
+    }
+
+    /* ---------- Buttons, checkboxes, radios ---------- */
+    .cal-inline-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .cal-inline-buttons .run-button,
+    .cal-inline-buttons .download-button,
+    .cal-inline-buttons .reset-button {
+      width: auto;
+      margin-top: 0;
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    .cal-checkbox,
+    .cal-radio {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-ui);
+      font-size: 12.5px;
+      color: var(--color-text-muted);
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .cal-checkbox input,
+    .cal-radio input {
+      accent-color: var(--color-accent);
+    }
+
+    .cal-radio-group {
+      border: none;
+      margin: 0 0 12px;
+      padding: 0;
+    }
+
+    .cal-radio-group legend {
+      font-family: var(--font-ui);
+      font-size: 12.5px;
+      color: var(--color-text);
+      margin-bottom: 8px;
+      padding: 0;
+    }
+
+    .cal-radio-group--inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 20px;
+    }
+
+    .cal-radio-group--inline legend {
+      width: 100%;
+    }
+
+    /* ---------- Step 3: CSL result cards ---------- */
+    .cal-fit-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+      gap: 16px;
+    }
+
+    .cal-fit-cards .param-group {
+      margin: 0;
+    }
+
+    .cal-fit-cards .param-group[hidden] {
+      display: none;
+    }
+
+    /* ---------- Step 4: one test at a time ---------- */
+    .cal-test-pager {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-ui);
+      font-size: 13px;
+      color: var(--color-text-muted);
+    }
+
+    .cal-test-pager .reset-button {
+      width: auto;
+      margin: 0;
+      padding: 4px 10px;
+    }
+
+    .cal-examine {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    /* ---------- Step 5: controls left, plots right ---------- */
+    .cal-tune {
+      display: grid;
+      grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .cal-tune__controls {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .cal-tune__controls .param-group {
+      margin: 0;
+    }
+
+    .cal-slider {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: -4px 0 12px;
+    }
+
+    .cal-slider input[type="range"] {
+      flex: 1;
+      min-width: 0;
+      accent-color: var(--color-accent);
+    }
+
+    .cal-slider input[type="range"]:disabled {
+      opacity: 0.4;
+    }
+
+    .cal-slider__lim {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--color-text-faint);
+      min-width: 34px;
+    }
+
+    .cal-slider__lim:last-child {
+      text-align: right;
+    }
+
+    .param-field input[type="number"]:disabled {
+      opacity: 0.5;
+    }
+
+    .cal-subhead {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: 12.5px;
+      color: var(--color-text);
+      margin: 14px 0 8px;
+    }
+
+    /* ---------- Step 6: summary ---------- */
+    .cal-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+      gap: 16px;
+    }
+
+    .cal-summary .param-group {
+      margin: 0;
+    }
+
+    /* ---------- Back / next ---------- */
+    .cal-pager {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .cal-pager .run-button,
+    .cal-pager .reset-button {
+      width: auto;
+      margin-top: 0;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .cal-pager [disabled] {
+      visibility: hidden;
+    }
+
+    @media (max-width: 900px) {
+      .cal-tune,
+      .cal-examine {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .cal-progress__label {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <span class="site-header__logo"><a href="./index.html"><img src="img/norsand-logo.svg" alt="NorSand Lab"></a></span>
+      <nav class="site-header__nav">
+        <a href="./index.html">Home</a>
+        <a href="./learn.html">Learn</a>
+        <a href="./visualization.html">Run NorSand</a>
+        <a href="./calibration.html" aria-current="page">Calibrate</a>
+        <a href="./resources.html">Resources</a>
+        <a href="./about.html">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <main class="content cal-main">
+
+      <!-- ============================================================
+           Progress bar: the six calibration steps
+           ============================================================ -->
+      <nav class="cal-progress" aria-label="Calibration progress">
+        <ol id="cal-progress">
+          <li class="is-current"><button type="button" data-step="1" aria-current="step"><span class="cal-progress__dot"><span class="cal-progress__num">1</span></span><span class="cal-progress__label">Import Data</span></button></li>
+          <li><button type="button" data-step="2"><span class="cal-progress__dot"><span class="cal-progress__num">2</span></span><span class="cal-progress__label">Review Tests</span></button></li>
+          <li><button type="button" data-step="3"><span class="cal-progress__dot"><span class="cal-progress__num">3</span></span><span class="cal-progress__label">Fit CSL</span></button></li>
+          <li><button type="button" data-step="4"><span class="cal-progress__dot"><span class="cal-progress__num">4</span></span><span class="cal-progress__label">Calibrate Plasticity</span></button></li>
+          <li><button type="button" data-step="5"><span class="cal-progress__dot"><span class="cal-progress__num">5</span></span><span class="cal-progress__label">Calibrate Stiffness/Hardening</span></button></li>
+          <li><button type="button" data-step="6"><span class="cal-progress__dot"><span class="cal-progress__num">6</span></span><span class="cal-progress__label">Validate &amp; Export</span></button></li>
+        </ol>
+      </nav>
+
+      <!-- ============================================================
+           STEP 1: Import laboratory data
+           ============================================================ -->
+      <section class="cal-step content__block" id="step-1" data-step="1">
+        <p class="cal-step__eyebrow">Step 1 of 6</p>
+        <div class="cal-title">
+          <h1>Import laboratory data</h1>
+          <button type="button" class="cal-info-btn" aria-expanded="false" aria-controls="info-1" aria-label="What and why">i</button>
+        </div>
+        <dl class="cal-info" id="info-1" hidden>
+          <dt>What are we doing?</dt>
+          <dd>Bringing in your triaxial tests and confirming what each column means.</dd>
+          <dt>Why are we doing it?</dt>
+          <dd>Every test is converted to the same variables NorSand produces, so lab and model curves can be compared directly.</dd>
+        </dl>
+        <p class="cal-lead">Missing quantities are calculated where possible, so you only need to provide enough columns to describe each test.</p>
+
+        <ol class="cal-flow" aria-label="Import stages">
+          <li class="is-here">Upload</li>
+          <li>Detect columns</li>
+          <li>Confirm mapping</li>
+          <li>Check units and sign convention</li>
+          <li>Preview plots</li>
+          <li>Calibrate</li>
+        </ol>
+
+        <h2 class="cal-section-title">How would you like to provide your data?</h2>
+        <div class="cal-methods" role="tablist" aria-label="Data input method">
+          <button type="button" class="cal-method" role="tab" id="method-upload-tab" aria-selected="true" aria-controls="method-upload">
+            <span class="cal-method__title">Upload laboratory file</span>
+            <span class="cal-method__desc">CSV or Excel. One file per test, or one file with a test ID column.</span>
+          </button>
+          <button type="button" class="cal-method" role="tab" id="method-paste-tab" aria-selected="false" aria-controls="method-paste">
+            <span class="cal-method__title">Paste from Excel</span>
+            <span class="cal-method__desc">Copy the cells, including the header row, and paste them in.</span>
+          </button>
+          <button type="button" class="cal-method" role="tab" id="method-manual-tab" aria-selected="false" aria-controls="method-manual">
+            <span class="cal-method__title">Enter values manually</span>
+            <span class="cal-method__desc">Type in a short test point by point.</span>
+          </button>
+        </div>
+
+        <!-- Upload -->
+        <div class="cal-method-panel" id="method-upload" role="tabpanel" aria-labelledby="method-upload-tab">
+          <div class="cal-workspace">
+            <div class="param-group">
+              <div class="param-group__title">Upload a file</div>
+              <label class="cal-dropzone" id="cal-dropzone" for="lab-file">
+                <span>Drop a file here or choose one</span>
+                <input type="file" id="lab-file" name="lab-file" accept=".csv,.txt,.xlsx,.xls" multiple>
+                <span class="cal-filename" id="lab-file-name"></span>
+              </label>
+            </div>
+            <div class="param-group">
+              <div class="param-group__title">Not sure about column names?</div>
+              <p class="cal-note">Download the template, replace the example rows with your data, and upload it. Columns that are not in the template can still be mapped by hand.</p>
+              <div class="cal-inline-buttons">
+                <button type="button" class="download-button" id="download-template">Download CSV template</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paste -->
+        <div class="cal-method-panel" id="method-paste" role="tabpanel" aria-labelledby="method-paste-tab" hidden>
+          <div class="param-group">
+            <div class="param-group__title">Paste from Excel</div>
+            <p class="cal-note">The first row must hold the column names. Tab-separated and comma-separated data both work.</p>
+            <textarea class="cal-textarea" id="lab-paste" name="lab-paste" placeholder="Test ID&#9;Axial_Strain (%)&#9;Dev Stress (kPa)&#9;Mean Eff Stress&#9;Vol Strain (%)&#10;CID-01&#9;0.00&#9;0.0&#9;100.0&#9;0.00&#10;CID-01&#9;0.50&#9;85.2&#9;128.4&#9;0.12"></textarea>
+            <div class="cal-inline-buttons" style="margin-top: 10px;">
+              <button type="button" class="run-button" id="read-paste">Read pasted data</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manual entry -->
+        <div class="cal-method-panel" id="method-manual" role="tabpanel" aria-labelledby="method-manual-tab" hidden>
+          <div class="cal-workspace">
+            <div class="param-group">
+              <div class="param-group__title">Test details</div>
+              <div class="param-field">
+                <label for="manual-id">Test ID</label>
+                <input type="text" id="manual-id" name="manual-id" value="CID-01" style="width: 110px; padding: 5px 7px; border: 1px solid var(--color-border); border-radius: 6px; background: var(--color-bg); font-family: var(--font-mono); font-size: 12.5px;">
+              </div>
+              <div class="param-field">
+                <label for="manual-type">Test type</label>
+                <select id="manual-type" name="manual-type">
+                  <option value="CID">CID &ndash; drained</option>
+                  <option value="CIU">CIU &ndash; undrained</option>
+                </select>
+              </div>
+              <div class="param-field">
+                <label for="manual-p0"><span class="param-symbol"><i>p&prime;<sub>0</sub></i></span> &ndash; initial mean effective stress</label>
+                <input type="number" id="manual-p0" name="manual-p0" step="any">
+                <span class="param-unit">kPa</span>
+              </div>
+              <div class="param-field">
+                <label for="manual-e0"><span class="param-symbol"><i>e<sub>0</sub></i></span> &ndash; initial void ratio</label>
+                <input type="number" id="manual-e0" name="manual-e0" step="any">
+              </div>
+              <div class="param-field">
+                <label for="manual-ocr">OCR, if known</label>
+                <input type="number" id="manual-ocr" name="manual-ocr" value="1" step="any">
+              </div>
+            </div>
+            <div class="param-group">
+              <div class="param-group__title">Measurements</div>
+              <div class="cal-table-wrap">
+                <table class="cal-table" id="manual-rows">
+                  <thead>
+                    <tr><th>&epsilon;<sub>1</sub> (%)</th><th>q (kPa)</th><th>p&prime; (kPa)</th><th id="manual-last-col">&epsilon;<sub>v</sub> (%)</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><input type="number" step="any"></td><td><input type="number" step="any"></td><td><input type="number" step="any"></td><td><input type="number" step="any"></td></tr>
+                    <tr><td><input type="number" step="any"></td><td><input type="number" step="any"></td><td><input type="number" step="any"></td><td><input type="number" step="any"></td></tr>
+                    <tr><td><input type="number" step="any"></td><td><input type="number" step="any"></td><td><input type="number" step="any"></td><td><input type="number" step="any"></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="cal-inline-buttons" style="margin-top: 10px;">
+                <button type="button" class="reset-button" id="manual-add-row">Add row</button>
+                <button type="button" class="run-button" id="manual-save">Save test</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="cal-section-title">We detected</h2>
+        <div class="cal-workspace">
+          <div class="param-group cal-wide">
+            <div class="param-group__title">Column mapping</div>
+            <p class="cal-note">Each quantity is matched to a column in your file by name. You do not need every row. Anything marked <em>Derived</em> is calculated from the columns you do provide.</p>
+            <div class="cal-table-wrap">
+              <table class="cal-table" id="column-map">
+                <thead>
+                  <tr><th>Quantity</th><th>Column in your file</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="cal-table__group"><td colspan="3">Main quantities</td></tr>
+                  <tr><td>Test ID</td><td><select data-quantity="test_id" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Waiting for data</span></td></tr>
+                  <tr><td>Axial strain, &epsilon;<sub>1</sub></td><td><select data-quantity="eps1" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Waiting for data</span></td></tr>
+                  <tr><td>Deviator stress, q</td><td><select data-quantity="q" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Waiting for data</span></td></tr>
+                  <tr><td>Mean effective stress, p&prime;</td><td><select data-quantity="p" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Waiting for data</span></td></tr>
+                  <tr><td>Volumetric strain, &epsilon;<sub>v</sub> (CID)</td><td><select data-quantity="epsv" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Waiting for data</span></td></tr>
+                  <tr><td>Pore pressure, &Delta;u (CIU)</td><td><select data-quantity="du" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Waiting for data</span></td></tr>
+                  <tr class="cal-table__group"><td colspan="3">Alternative inputs, used to derive missing quantities</td></tr>
+                  <tr><td>Effective stresses, &sigma;&prime;<sub>1</sub> and &sigma;&prime;<sub>3</sub></td><td><select data-quantity="sig_eff" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Optional</span></td></tr>
+                  <tr><td>Total stresses, &sigma;<sub>1</sub> and &sigma;<sub>3</sub></td><td><select data-quantity="sig_total" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Optional</span></td></tr>
+                  <tr><td>Pore pressure, u</td><td><select data-quantity="u" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Optional</span></td></tr>
+                  <tr><td>Void ratio, e</td><td><select data-quantity="e" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Optional</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="cal-mapping-actions">
+              <button type="button" class="run-button" id="mapping-confirm" style="width: auto; padding: 9px 16px;">&#10003; Looks correct</button>
+              <button type="button" class="reset-button" id="mapping-edit" style="width: auto; margin: 0; padding: 8px 16px;">Edit mapping</button>
+              <span class="cal-mapping-status" id="mapping-status" aria-live="polite"></span>
+            </div>
+          </div>
+
+          <div class="param-group">
+            <div class="param-group__title">Derived quantities</div>
+            <p class="cal-note">When a quantity is missing, it is calculated from the others.</p>
+            <p class="cal-formula">q = &sigma;&prime;<sub>1</sub> &minus; &sigma;&prime;<sub>3</sub></p>
+            <p class="cal-formula">p&prime; = (&sigma;&prime;<sub>1</sub> + 2&sigma;&prime;<sub>3</sub>) / 3</p>
+            <p class="cal-formula">&sigma;&prime; = &sigma; &minus; u, when total stresses and pore pressure are given</p>
+            <p class="cal-formula">e = e<sub>0</sub> &minus; (1 + e<sub>0</sub>) &epsilon;<sub>v</sub>, from e<sub>0</sub> and volumetric strain</p>
+          </div>
+
+          <div class="param-group">
+            <div class="param-group__title">Units and sign convention</div>
+            <div class="param-field">
+              <label for="unit-stress">Stress units</label>
+              <select id="unit-stress" name="unit-stress">
+                <option value="kpa">kPa</option>
+                <option value="mpa">MPa</option>
+              </select>
+            </div>
+            <div class="param-field">
+              <label for="unit-strain">Strain given as</label>
+              <select id="unit-strain" name="unit-strain">
+                <option value="pct">Percent</option>
+                <option value="decimal">Decimal</option>
+              </select>
+            </div>
+            <div class="param-field">
+              <label for="sign-convention">Sign convention</label>
+              <select id="sign-convention" name="sign-convention">
+                <option value="compression">Compression positive</option>
+                <option value="tension">Tension positive</option>
+              </select>
+            </div>
+            <div class="param-field">
+              <label for="epsv-sign">Volumetric strain</label>
+              <select id="epsv-sign" name="epsv-sign">
+                <option value="contraction">Contraction positive</option>
+                <option value="dilation">Dilation positive</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="param-group cal-wide">
+            <div class="param-group__title">Data preview</div>
+            <p class="cal-note">The first rows of each test, after unit conversion and derived quantities.</p>
+            <div class="cal-table-wrap">
+              <table class="cal-table" id="data-preview">
+                <thead>
+                  <tr><th>Test ID</th><th>&epsilon;<sub>1</sub> (%)</th><th>q (kPa)</th><th>p&prime; (kPa)</th><th>&epsilon;<sub>v</sub> (%)</th><th>&Delta;u (kPa)</th><th>e</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="cal-table__empty"><td colspan="7">A preview appears here after data is imported.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="param-group cal-wide">
+            <div class="param-group__title">Test metadata</div>
+            <p class="cal-note">One row per test. Values found in the file are filled in. Enter anything that is missing. OCR is an initial condition from the consolidation history, not a calibration parameter. Leave it at 1 if the sample is normally consolidated.</p>
+            <div class="cal-table-wrap">
+              <table class="cal-table" id="test-metadata">
+                <thead>
+                  <tr>
+                    <th>Test ID</th>
+                    <th>CID / CIU</th>
+                    <th>Initial p&prime;<sub>0</sub> (kPa)</th>
+                    <th>Initial e<sub>0</sub></th>
+                    <th>OCR, if known</th>
+                    <th>Rows</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="cal-table__empty"><td colspan="6">Tests appear here after data is imported.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="cal-pager">
+          <button type="button" class="reset-button" data-nav="prev" disabled>Back</button>
+          <button type="button" class="run-button" data-nav="next">Preview plots &rarr;</button>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           STEP 2: Review tests
+           ============================================================ -->
+      <section class="cal-step content__block" id="step-2" data-step="2" hidden>
+        <p class="cal-step__eyebrow">Step 2 of 6</p>
+        <div class="cal-title">
+          <h1>Review tests</h1>
+          <button type="button" class="cal-info-btn" aria-expanded="false" aria-controls="info-2" aria-label="What and why">i</button>
+        </div>
+        <dl class="cal-info" id="info-2" hidden>
+          <dt>What are we doing?</dt>
+          <dd>Checking that each test was read correctly, and choosing which tests to include.</dd>
+          <dt>Why are we doing it?</dt>
+          <dd>A misread column or a faulty test pulls every later parameter in the wrong direction.</dd>
+        </dl>
+        <p class="cal-lead">Click a test to see its plots. Confirm the data were interpreted correctly before moving on.</p>
+
+        <div class="cal-test-cards" id="test-cards">
+          <!-- Example cards. The calibration script replaces these with one card per imported test. -->
+          <div class="cal-test-card is-example is-selected" data-test="CID-01" tabindex="0">
+            <span class="badge badge--soon">Example</span>
+            <div class="cal-test-card__id">CID-01</div>
+            <div class="cal-test-card__meta">Drained &middot; p&prime;<sub>0</sub> = 100 kPa</div>
+            <label class="cal-checkbox"><input type="checkbox" checked> <span>Include in calibration</span></label>
+          </div>
+          <div class="cal-test-card is-example" data-test="CID-02" tabindex="0">
+            <span class="badge badge--soon">Example</span>
+            <div class="cal-test-card__id">CID-02</div>
+            <div class="cal-test-card__meta">Drained &middot; p&prime;<sub>0</sub> = 200 kPa</div>
+            <label class="cal-checkbox"><input type="checkbox" checked> <span>Include in calibration</span></label>
+          </div>
+          <div class="cal-test-card is-example" data-test="CIU-01" tabindex="0">
+            <span class="badge badge--soon">Example</span>
+            <div class="cal-test-card__id">CIU-01</div>
+            <div class="cal-test-card__meta">Undrained &middot; p&prime;<sub>0</sub> = 300 kPa</div>
+            <label class="cal-checkbox"><input type="checkbox" checked> <span>Include in calibration</span></label>
+          </div>
+        </div>
+
+        <h2 class="cal-section-title">Test <span id="review-selected-test">CID-01</span></h2>
+        <div class="cal-plot-grid">
+          <div class="cal-plot" id="review-q-eps1"><span class="cal-plot__title">q &ndash; &epsilon;<sub>1</sub></span><span>Stress&ndash;strain curve</span></div>
+          <div class="cal-plot" id="review-p-q"><span class="cal-plot__title">p&prime; &ndash; q</span><span>Effective stress path</span></div>
+          <div class="cal-plot" id="review-vol"><span class="cal-plot__title">&epsilon;<sub>v</sub> &ndash; &epsilon;<sub>1</sub> or &Delta;u &ndash; &epsilon;<sub>1</sub></span><span>Volume change for CID, pore pressure for CIU</span></div>
+          <div class="cal-plot" id="review-e-logp"><span class="cal-plot__title">e &ndash; log p&prime;</span><span>Void ratio path</span></div>
+        </div>
+
+        <div class="cal-workspace" style="margin-top: 16px;">
+          <div class="param-group">
+            <div class="param-group__title">Exclude part of this test</div>
+            <p class="cal-note">Use this for unreliable intervals, such as data after a shear band formed. Excluded data is kept and greyed out, never deleted.</p>
+            <div class="param-field">
+              <label for="exclude-from">From &epsilon;<sub>1</sub></label>
+              <input type="number" id="exclude-from" name="exclude-from" step="any">
+              <span class="param-unit">%</span>
+            </div>
+            <div class="param-field">
+              <label for="exclude-to">To &epsilon;<sub>1</sub></label>
+              <input type="number" id="exclude-to" name="exclude-to" step="any">
+              <span class="param-unit">%</span>
+            </div>
+            <div class="cal-inline-buttons">
+              <button type="button" class="download-button" id="exclude-add">Exclude range</button>
+              <button type="button" class="reset-button" id="exclude-clear">Clear</button>
+            </div>
+          </div>
+          <div class="param-group">
+            <div class="param-group__title">Confirm</div>
+            <label class="cal-checkbox"><input type="checkbox" id="review-confirm"> <span>The data were interpreted correctly for all included tests.</span></label>
+            <p class="cal-note">If a plot looks wrong, go back to step 1 and check the column mapping, units and sign convention.</p>
+          </div>
+        </div>
+
+        <div class="cal-pager">
+          <button type="button" class="reset-button" data-nav="prev">Back</button>
+          <button type="button" class="run-button" data-nav="next">Next: fit the CSL &rarr;</button>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           STEP 3: Critical state line
+           ============================================================ -->
+      <section class="cal-step content__block" id="step-3" data-step="3" hidden>
+        <p class="cal-step__eyebrow">Step 3 of 6</p>
+        <div class="cal-title">
+          <h1>Critical state line</h1>
+          <button type="button" class="cal-info-btn" aria-expanded="false" aria-controls="info-3" aria-label="What and why">i</button>
+        </div>
+        <dl class="cal-info" id="info-3" hidden>
+          <dt>What are we doing?</dt>
+          <dd>Choosing the points where each test truly reached critical state, then fitting the CSL through them.</dd>
+          <dt>Why are we doing it?</dt>
+          <dd>The CSL defines the state parameter &psi;, and every NorSand parameter after this depends on it.
+            <div class="equation">&psi; = e &minus; e<sub>c</sub>(p&prime;)</div>
+          </dd>
+        </dl>
+        <p class="cal-lead">Select or confirm the critical-state point for each test. Accepted points are used to fit the line.</p>
+
+        <h2 class="cal-section-title">Select and confirm critical-state points</h2>
+        <p class="cal-warning">A test that ends at 20% strain has not necessarily reached critical state. Accept a point only when q, p&prime; and the volume or pore pressure have stopped changing, and the dilatancy D is close to zero.</p>
+        <div class="cal-table-wrap">
+          <table class="cal-table" id="csl-candidates">
+            <thead>
+              <tr><th>Accept</th><th>Test ID</th><th>&epsilon;<sub>1</sub> (%)</th><th>p&prime; (kPa)</th><th>q (kPa)</th><th>e</th><th>D at end</th><th>Change in q over last 2%</th><th>Check</th></tr>
+            </thead>
+            <tbody>
+              <tr class="cal-table__empty"><td colspan="9">One candidate point per test appears here.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="cal-plot-grid" style="margin-top: 16px;">
+          <div class="cal-plot cal-plot--tall cal-wide" id="csl-e-logp"><span class="cal-plot__title">e &ndash; log p&prime;</span><span>All tests together. Click a point to accept or reject it.</span></div>
+        </div>
+
+        <h2 class="cal-section-title">Has the test reached critical state?</h2>
+        <p class="cal-note">These plots show the end of the selected test. Both should level off at critical state.</p>
+        <div class="cal-plot-grid">
+          <div class="cal-plot" id="csl-check-d"><span class="cal-plot__title">D &ndash; &epsilon;<sub>1</sub></span><span>Dilatancy should approach zero</span></div>
+          <div class="cal-plot" id="csl-check-q"><span class="cal-plot__title">q &ndash; &epsilon;<sub>1</sub></span><span>Stress should stop changing</span></div>
+        </div>
+
+        <h2 class="cal-section-title">CSL model</h2>
+        <div class="cal-workspace">
+          <div class="param-group">
+            <div class="param-group__title">Fit settings</div>
+            <fieldset class="cal-radio-group">
+              <legend>CSL model</legend>
+              <label class="cal-radio"><input type="radio" name="csl-model" value="semi_log"> <span>Semi-log</span></label>
+              <label class="cal-radio"><input type="radio" name="csl-model" value="curved"> <span>Curved</span></label>
+              <label class="cal-radio"><input type="radio" name="csl-model" value="both" checked> <span>Compare both</span></label>
+            </fieldset>
+            <div class="param-field">
+              <label for="cal-pref"><span class="param-symbol">pref</span> &ndash; reference pressure</label>
+              <input type="number" id="cal-pref" name="cal-pref" value="100" step="any">
+              <span class="param-unit">kPa</span>
+            </div>
+            <div class="param-field" id="csl-use-field">
+              <label for="csl-use">Use for calibration</label>
+              <select id="csl-use" name="csl-use">
+                <option value="semi_log">Semi-log</option>
+                <option value="curved">Curved</option>
+              </select>
+            </div>
+            <div class="cal-inline-buttons">
+              <button type="button" class="run-button" id="fit-csl-button">Fit CSL</button>
+            </div>
+          </div>
+
+          <div class="cal-fit-cards">
+            <div class="param-group" id="csl-card-semilog">
+              <div class="param-group__title">Semi-log</div>
+              <p class="cal-formula">e<sub>c</sub> = &Gamma; &minus; &lambda; log<sub>10</sub>(p&prime;/p<sub>ref</sub>)</p>
+              <div class="param-field"><label>&Gamma;</label><output class="cal-output" id="fit-gamma">&ndash;</output></div>
+              <div class="param-field"><label>&lambda;</label><output class="cal-output" id="fit-lambda">&ndash;</output></div>
+              <div class="param-field"><label>R&sup2;</label><output class="cal-output" id="fit-semilog-r2">&ndash;</output></div>
+              <div class="param-field"><label>RMSE</label><output class="cal-output" id="fit-semilog-rmse">&ndash;</output></div>
+            </div>
+            <div class="param-group" id="csl-card-curved">
+              <div class="param-group__title">Curved</div>
+              <p class="cal-formula">e<sub>c</sub> = C<sub>a</sub> &minus; C<sub>b</sub>(p&prime;/p<sub>ref</sub>)<sup>C<sub>c</sub></sup></p>
+              <div class="param-field"><label>C<sub>a</sub></label><output class="cal-output" id="fit-ca">&ndash;</output></div>
+              <div class="param-field"><label>C<sub>b</sub></label><output class="cal-output" id="fit-cb">&ndash;</output></div>
+              <div class="param-field"><label>C<sub>c</sub></label><output class="cal-output" id="fit-cc">&ndash;</output></div>
+              <div class="param-field"><label>R&sup2;</label><output class="cal-output" id="fit-curved-r2">&ndash;</output></div>
+              <div class="param-field"><label>RMSE</label><output class="cal-output" id="fit-curved-rmse">&ndash;</output></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cal-pager">
+          <button type="button" class="reset-button" data-nav="prev">Back</button>
+          <button type="button" class="run-button" data-nav="next">Accept CSL and continue &rarr;</button>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           STEP 4: Plasticity parameters
+           ============================================================ -->
+      <section class="cal-step content__block" id="step-4" data-step="4" hidden>
+        <p class="cal-step__eyebrow">Step 4 of 6</p>
+        <div class="cal-title">
+          <h1>Plasticity calibration</h1>
+          <button type="button" class="cal-info-btn" aria-expanded="false" aria-controls="info-4" aria-label="What and why">i</button>
+        </div>
+        <dl class="cal-info" id="info-4" hidden>
+          <dt>What are we doing?</dt>
+          <dd>Dense drained tests are used to determine the relationship between stress ratio, dilatancy and state.</dd>
+          <dt>Why are we doing it?</dt>
+          <dd>The maximum-dilation condition from each test is used to estimate M<sub>tc</sub>, N and &chi;<sub>tc</sub>.
+            <div class="equation">&eta; = q/p&prime; &nbsp;&nbsp; D = d&epsilon;<sub>v</sub><sup>p</sup> / d&epsilon;<sub>q</sub><sup>p</sup> &nbsp;&nbsp; &epsilon;<sub>q</sub> = &epsilon;<sub>1</sub> &minus; &epsilon;<sub>v</sub>/3</div>
+          </dd>
+        </dl>
+        <p class="cal-lead">The state parameter is calculated at every data point using the CSL from step 3. Each dense drained test then gives one maximum-dilation point.</p>
+
+        <ol class="cal-flow" aria-label="Calculation sequence">
+          <li>Lab data</li>
+          <li>Calculate e</li>
+          <li>CSL gives e<sub>c</sub></li>
+          <li>Calculate &psi;</li>
+          <li>Identify maximum-dilation points</li>
+          <li>Fit M<sub>tc</sub>, N and &chi;<sub>tc</sub></li>
+        </ol>
+
+        <!-- 4A -->
+        <h2 class="cal-section-title"><span class="cal-section-title__tag">4A</span> Examine each dense drained test</h2>
+        <div class="param-group">
+          <div class="param-group__title">
+            <span id="examine-test-name">No drained tests yet</span>
+            <span class="cal-test-pager">
+              <button type="button" class="reset-button" id="examine-prev" disabled>&larr; Previous</button>
+              <span id="examine-count">Test &ndash; of &ndash;</span>
+              <button type="button" class="reset-button" id="examine-next" disabled>Next test &rarr;</button>
+            </span>
+          </div>
+          <div class="cal-examine">
+            <div class="cal-plot-grid">
+              <div class="cal-plot" id="plot-eta-d"><span class="cal-plot__title">&eta; &ndash; D</span><span>Maximum dilation is marked automatically</span></div>
+              <div class="cal-plot" id="plot-psi-eps1"><span class="cal-plot__title">&psi; &ndash; &epsilon;<sub>1</sub></span><span>State parameter through the test</span></div>
+            </div>
+            <div>
+              <div class="cal-subhead" style="margin-top: 0;">At maximum dilation</div>
+              <div class="param-field"><label>D<sub>min</sub></label><output class="cal-output" id="examine-dmin">&ndash;</output></div>
+              <div class="param-field"><label>&eta;</label><output class="cal-output" id="examine-eta">&ndash;</output></div>
+              <div class="param-field"><label>&psi;</label><output class="cal-output" id="examine-psi">&ndash;</output></div>
+              <label class="cal-checkbox" style="margin-top: 12px;"><input type="checkbox" id="examine-accept"> <span>&#10003; Accept point</span></label>
+              <div class="cal-subhead">Dilatancy settings</div>
+              <div class="param-field">
+                <label for="smooth-window">Smoothing window</label>
+                <input type="number" id="smooth-window" name="smooth-window" value="11" step="2" min="3">
+                <span class="param-unit">pts</span>
+              </div>
+              <label class="cal-checkbox"><input type="checkbox" id="remove-elastic" name="remove-elastic" checked> <span>Use plastic strains only</span></label>
+              <p class="cal-note">D is the slope of measured curves, so the data is smoothed first. Increase the window if the &eta;&ndash;D plot looks jagged.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4B -->
+        <h2 class="cal-section-title"><span class="cal-section-title__tag">4B</span> Combine all tests</h2>
+        <div class="cal-table-wrap">
+          <table class="cal-table" id="dmin-table">
+            <thead>
+              <tr><th>Test</th><th>&psi; at max dilation</th><th>D<sub>min</sub></th><th>&eta;</th><th>Accepted</th></tr>
+            </thead>
+            <tbody>
+              <tr class="cal-table__empty"><td colspan="5">Accepted points from 4A appear here.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 4C -->
+        <h2 class="cal-section-title"><span class="cal-section-title__tag">4C</span> Calculate parameters</h2>
+        <div class="cal-workspace">
+          <div class="param-group">
+            <div class="param-group__title">Calculated parameters</div>
+            <div class="param-field"><label><span class="param-symbol"><i>M<sub>tc</sub></i></span> &ndash; critical friction ratio</label><output class="cal-output" id="fit-mtc">&ndash;</output></div>
+            <div class="param-field"><label><span class="param-symbol"><i>N</i></span> &ndash; volumetric coupling</label><output class="cal-output" id="fit-n">&ndash;</output></div>
+            <div class="param-field"><label><span class="param-symbol"><i>&chi;<sub>tc</sub></i></span> &ndash; dilatancy constant</label><output class="cal-output" id="fit-chi">&ndash;</output></div>
+            <p class="cal-formula" style="margin-top: 12px;">&eta;<sub>max</sub> = M<sub>tc</sub> &minus; (1 &minus; N) D<sub>min</sub></p>
+            <p class="cal-formula">D<sub>min</sub> = &chi;<sub>tc</sub> &psi;</p>
+          </div>
+          <div class="cal-plot-grid">
+            <div class="cal-plot" id="plot-etamax-dmin"><span class="cal-plot__title">&eta;<sub>max</sub> &ndash; D<sub>min</sub></span><span>Intercept gives M<sub>tc</sub>, slope gives N</span></div>
+            <div class="cal-plot" id="plot-dmin-psi"><span class="cal-plot__title">D<sub>min</sub> &ndash; &psi;</span><span>Slope gives &chi;<sub>tc</sub></span></div>
+          </div>
+        </div>
+
+        <div class="cal-pager">
+          <button type="button" class="reset-button" data-nav="prev">Back</button>
+          <button type="button" class="run-button" data-nav="next">Accept parameters &rarr;</button>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           STEP 5: Stiffness and hardening
+           ============================================================ -->
+      <section class="cal-step content__block" id="step-5" data-step="5" hidden>
+        <p class="cal-step__eyebrow">Step 5 of 6</p>
+        <div class="cal-title">
+          <h1>Stiffness and hardening</h1>
+          <button type="button" class="cal-info-btn" aria-expanded="false" aria-controls="info-5" aria-label="What and why">i</button>
+        </div>
+        <dl class="cal-info" id="info-5" hidden>
+          <dt>What are we doing?</dt>
+          <dd>Running NorSand for each test and adjusting G<sub>ref</sub>, H<sub>0</sub> and, only if needed, H<sub>y</sub> until the curves match the lab data.</dd>
+          <dt>Why are we doing it?</dt>
+          <dd>Stiffness and hardening cannot be read off a plot, so they are found by comparing the model with the measured response.</dd>
+        </dl>
+        <p class="cal-lead">The model reruns every time a parameter changes. Type an exact value in a box, or drag its slider to see how sensitive the fit is. OCR is not calibrated here. Each test uses the OCR entered in step 1.</p>
+
+        <div class="cal-tune">
+          <div class="cal-tune__controls">
+
+            <!-- a. Gref -->
+            <div class="param-group">
+              <div class="param-group__title"><span>a. Starting stiffness, G<sub>ref</sub></span></div>
+              <div class="param-field">
+                <label for="cal-nu"><span class="param-symbol"><i>&nu;</i></span> &ndash; Poisson&rsquo;s ratio</label>
+                <input type="number" id="cal-nu" name="cal-nu" value="0.25" step="any">
+              </div>
+              <div class="param-field">
+                <label for="cal-m"><span class="param-symbol"><i>m</i></span> &ndash; stiffness exponent</label>
+                <input type="number" id="cal-m" name="cal-m" value="0.47" step="any">
+              </div>
+
+              <fieldset class="cal-radio-group">
+                <legend>Method</legend>
+                <label class="cal-radio"><input type="radio" name="gref-method" value="spt" checked> <span>Estimate from SPT N-value</span></label>
+                <label class="cal-radio"><input type="radio" name="gref-method" value="manual"> <span>Enter G<sub>ref</sub> manually</span></label>
+              </fieldset>
+
+              <div id="gref-spt-fields">
+                <div class="param-field">
+                  <label for="spt-n">SPT N-value</label>
+                  <input type="number" id="spt-n" name="spt-n" value="25" step="any">
+                </div>
+                <div class="param-field">
+                  <label for="spt-p"><span class="param-symbol"><i>p&prime;</i></span> &ndash; test value</label>
+                  <input type="number" id="spt-p" name="spt-p" value="100" step="any">
+                  <span class="param-unit">kPa</span>
+                </div>
+                <p class="cal-formula">E &asymp; 2000 N<sub>SPT</sub> = <span id="spt-e">&ndash;</span> kPa<br>G = E / [2(1 + &nu;)] = <span id="spt-g">&ndash;</span> kPa<br>G<sub>ref</sub> = G (p<sub>ref</sub>/p&prime;)<sup>m</sup></p>
+                <p class="cal-note">This is only a starting estimate. Refine G<sub>ref</sub> against the laboratory stress&ndash;strain response.</p>
+              </div>
+
+              <div class="param-field">
+                <label for="cal-gref"><span class="param-symbol"><i>G<sub>ref</sub></i></span> <span id="gref-label-hint">&ndash; suggested</span></label>
+                <input type="number" id="cal-gref" name="cal-gref" value="20000" step="any">
+                <span class="param-unit">kPa</span>
+              </div>
+              <div class="cal-slider">
+                <span class="cal-slider__lim" id="cal-gref-min"></span>
+                <input type="range" id="cal-gref-range" aria-label="Gref slider" data-for="cal-gref" data-mode="relative">
+                <span class="cal-slider__lim" id="cal-gref-max"></span>
+              </div>
+            </div>
+
+            <!-- b. H0 -->
+            <div class="param-group">
+              <div class="param-group__title"><span>b. Initial hardening, H<sub>0</sub></span></div>
+              <p class="cal-note">State-dependent hardening is initially disabled (H<sub>y</sub> = 0), so H = H<sub>0</sub>. Adjust H<sub>0</sub> to improve agreement between the laboratory data and the NorSand simulation.</p>
+              <div class="param-field">
+                <label for="cal-h0"><span class="param-symbol"><i>H<sub>0</sub></i></span> &ndash; hardening modulus</label>
+                <input type="number" id="cal-h0" name="cal-h0" value="60" step="any">
+              </div>
+              <div class="cal-slider">
+                <span class="cal-slider__lim" id="cal-h0-min"></span>
+                <input type="range" id="cal-h0-range" aria-label="H0 slider" data-for="cal-h0" data-mode="fixed" data-min="20" data-max="400">
+                <span class="cal-slider__lim" id="cal-h0-max"></span>
+              </div>
+              <p class="cal-note">For a semi-log CSL, a starting value is H<sub>0</sub> &asymp; 4/&lambda;. Suggested from step 3: <output class="cal-output" id="h0-suggest" style="min-width: 0;">fit the CSL first</output></p>
+            </div>
+
+            <!-- c. Hy -->
+            <div class="param-group">
+              <div class="param-group__title"><span>c. State-dependent hardening, H<sub>y</sub></span></div>
+              <p class="cal-note">Check the fit across tests with different initial state parameters. Only if a single H<sub>0</sub> cannot match them all, include H<sub>y</sub> and calibrate H<sub>0</sub> and H<sub>y</sub> against several tests at once.</p>
+              <fieldset class="cal-radio-group">
+                <legend>Include state-dependent hardening?</legend>
+                <label class="cal-radio"><input type="radio" name="hy-mode" value="no" checked> <span>No: H = H<sub>0</sub></span></label>
+                <label class="cal-radio"><input type="radio" name="hy-mode" value="yes"> <span>Yes: H = H<sub>0</sub> &minus; H<sub>y</sub>&psi;</span></label>
+              </fieldset>
+              <div class="param-field">
+                <label for="cal-hy"><span class="param-symbol"><i>H<sub>y</sub></i></span></label>
+                <input type="number" id="cal-hy" name="cal-hy" value="0" step="any" disabled>
+              </div>
+              <div class="cal-slider">
+                <span class="cal-slider__lim" id="cal-hy-min"></span>
+                <input type="range" id="cal-hy-range" aria-label="Hy slider" data-for="cal-hy" data-mode="fixed" data-min="0" data-max="1000" disabled>
+                <span class="cal-slider__lim" id="cal-hy-max"></span>
+              </div>
+            </div>
+
+            <!-- Softening and run settings -->
+            <div class="param-group">
+              <div class="param-group__title">Softening and simulation</div>
+              <div class="param-field">
+                <label for="cal-s"><span class="param-symbol"><i>S</i></span> &ndash; additional softening</label>
+                <input type="number" id="cal-s" name="cal-s" value="0" step="any">
+              </div>
+              <div class="param-field">
+                <label for="cal-steps">Simulation steps</label>
+                <input type="number" id="cal-steps" name="cal-steps" value="501" step="1">
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="cal-legend"><span class="cal-legend__lab">Lab: points</span><span class="cal-legend__model">NorSand: line</span></div>
+            <div class="cal-plot-grid cal-plot-grid--stack">
+              <div class="cal-plot" id="fit-q-eps1"><span class="cal-plot__title">q &ndash; &epsilon;<sub>1</sub></span><span>All included tests</span></div>
+              <div class="cal-plot" id="fit-p-q"><span class="cal-plot__title">p&prime; &ndash; q</span><span>Stress paths</span></div>
+              <div class="cal-plot" id="fit-vol"><span class="cal-plot__title">&epsilon;<sub>v</sub> &ndash; &epsilon;<sub>1</sub> for CID, &Delta;u &ndash; &epsilon;<sub>1</sub> for CIU</span><span>Volume change or pore pressure</span></div>
+            </div>
+            <div class="param-group" style="margin-top: 16px;">
+              <div class="param-group__title">Fit across states</div>
+              <p class="cal-note">If the error grows steadily with &psi;<sub>0</sub>, a single H<sub>0</sub> is not enough and H<sub>y</sub> is justified.</p>
+              <div class="cal-table-wrap">
+                <table class="cal-table" id="state-check">
+                  <thead>
+                    <tr><th>Test</th><th>&psi;<sub>0</sub></th><th>OCR</th><th>q error (%)</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr class="cal-table__empty"><td colspan="4">Errors appear here once NorSand has run.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cal-pager">
+          <button type="button" class="reset-button" data-nav="prev">Back</button>
+          <button type="button" class="run-button" data-nav="next">Next: validate and export &rarr;</button>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           STEP 6: Validation and export
+           ============================================================ -->
+      <section class="cal-step content__block" id="step-6" data-step="6" hidden>
+        <p class="cal-step__eyebrow">Step 6 of 6</p>
+        <div class="cal-title">
+          <h1>Validation and export</h1>
+          <button type="button" class="cal-info-btn" aria-expanded="false" aria-controls="info-6" aria-label="What and why">i</button>
+        </div>
+        <dl class="cal-info" id="info-6" hidden>
+          <dt>What are we doing?</dt>
+          <dd>Running every test with one shared parameter set and exporting the result.</dd>
+          <dt>Why are we doing it?</dt>
+          <dd>A calibration is only useful if a single set of soil parameters describes all the tests reasonably well.</dd>
+        </dl>
+        <p class="cal-lead">All tests are shown with one parameter set, not one set per test.</p>
+
+        <h2 class="cal-section-title">Calibrated NorSand parameters</h2>
+        <div class="cal-summary" id="final-params">
+          <div class="param-group">
+            <div class="param-group__title">CSL</div>
+            <div class="param-field"><label>&Gamma; / C<sub>a</sub></label><output class="cal-output" data-param="gamma_ca">&ndash;</output></div>
+            <div class="param-field"><label>&lambda; / C<sub>b</sub></label><output class="cal-output" data-param="lambda_cb">&ndash;</output></div>
+            <div class="param-field"><label>C<sub>c</sub></label><output class="cal-output" data-param="cc">&ndash;</output></div>
+          </div>
+          <div class="param-group">
+            <div class="param-group__title">Plasticity</div>
+            <div class="param-field"><label>M<sub>tc</sub></label><output class="cal-output" data-param="mtc">&ndash;</output></div>
+            <div class="param-field"><label>N</label><output class="cal-output" data-param="n">&ndash;</output></div>
+            <div class="param-field"><label>&chi;<sub>tc</sub></label><output class="cal-output" data-param="chi">&ndash;</output></div>
+          </div>
+          <div class="param-group">
+            <div class="param-group__title">Hardening</div>
+            <div class="param-field"><label>H<sub>0</sub></label><output class="cal-output" data-param="h0">&ndash;</output></div>
+            <div class="param-field"><label>H<sub>y</sub></label><output class="cal-output" data-param="hy">&ndash;</output></div>
+          </div>
+          <div class="param-group">
+            <div class="param-group__title">Elasticity</div>
+            <div class="param-field"><label>G<sub>ref</sub> (kPa)</label><output class="cal-output" data-param="gref">&ndash;</output></div>
+            <div class="param-field"><label>m</label><output class="cal-output" data-param="m">&ndash;</output></div>
+            <div class="param-field"><label>&nu;</label><output class="cal-output" data-param="nu">&ndash;</output></div>
+          </div>
+          <div class="param-group">
+            <div class="param-group__title">Softening</div>
+            <div class="param-field"><label>S</label><output class="cal-output" data-param="s">&ndash;</output></div>
+          </div>
+        </div>
+
+        <h2 class="cal-section-title">Downloads</h2>
+        <div class="cal-inline-buttons">
+          <button type="button" class="run-button" id="export-params">Download Parameters</button>
+          <button type="button" class="download-button" id="export-figures">Download Figures</button>
+          <button type="button" class="download-button" id="export-results">Download Calibration Results</button>
+          <button type="button" class="download-button" id="export-report">Download Report</button>
+        </div>
+
+        <h2 class="cal-section-title">Fit by test</h2>
+        <div class="cal-table-wrap">
+          <table class="cal-table" id="fit-errors">
+            <thead>
+              <tr><th>Test</th><th>CID / CIU</th><th>&psi;<sub>0</sub></th><th>q error (%)</th><th>&epsilon;<sub>v</sub> or &Delta;u error (%)</th><th>Peak q, lab vs model</th><th>Used in calibration</th></tr>
+            </thead>
+            <tbody>
+              <tr class="cal-table__empty"><td colspan="7">Errors appear here after the final run.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="cal-plot-grid" style="margin-top: 16px;">
+          <div class="cal-plot cal-plot--tall" id="final-q-eps1"><span class="cal-plot__title">q &ndash; &epsilon;<sub>1</sub></span><span>All tests with the final parameters</span></div>
+          <div class="cal-plot cal-plot--tall" id="final-p-q"><span class="cal-plot__title">p&prime; &ndash; q</span><span>All stress paths with the CSL</span></div>
+          <div class="cal-plot cal-plot--tall" id="final-vol"><span class="cal-plot__title">&epsilon;<sub>v</sub> or &Delta;u &ndash; &epsilon;<sub>1</sub></span><span>All tests with the final parameters</span></div>
+        </div>
+
+        <div class="cal-pager">
+          <button type="button" class="reset-button" data-nav="prev">Back</button>
+          <button type="button" class="run-button" data-nav="next" disabled>Next</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // ---------------------------------------------------------------
+    // Step navigation and progress bar. Steps before the current one
+    // are shown as done. The URL hash (#step-3) lets a step be linked.
+    // ---------------------------------------------------------------
+    const TOTAL_STEPS = 6;
+    const progressItems = document.querySelectorAll('#cal-progress li');
+    const stepPanels = document.querySelectorAll('.cal-step');
+
+    function showStep(n, fromUser = true) {
+      n = Math.min(Math.max(n, 1), TOTAL_STEPS);
+      stepPanels.forEach(panel => {
+        panel.hidden = Number(panel.dataset.step) !== n;
+      });
+      progressItems.forEach((item, i) => {
+        const step = i + 1;
+        const btn = item.querySelector('button');
+        item.classList.toggle('is-done', step < n);
+        item.classList.toggle('is-current', step === n);
+        if (step === n) {
+          btn.setAttribute('aria-current', 'step');
+        } else {
+          btn.removeAttribute('aria-current');
+        }
+      });
+      if (fromUser) {
+        history.replaceState(null, '', `#step-${n}`);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function currentStep() {
+      const visible = document.querySelector('.cal-step:not([hidden])');
+      return visible ? Number(visible.dataset.step) : 1;
+    }
+
+    progressItems.forEach(item => {
+      const btn = item.querySelector('button');
+      btn.addEventListener('click', () => showStep(Number(btn.dataset.step)));
+    });
+
+    document.querySelectorAll('[data-nav]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const delta = btn.dataset.nav === 'next' ? 1 : -1;
+        showStep(currentStep() + delta);
+      });
+    });
+
+    const hashMatch = window.location.hash.match(/^#step-(\d)$/);
+    if (hashMatch) {
+      showStep(Number(hashMatch[1]), false);
+      // The browser jumps to the #step-N anchor, which hides the heading under the sticky header.
+      window.addEventListener('load', () => window.scrollTo(0, 0));
+    }
+
+    // ---------------------------------------------------------------
+    // The (i) buttons show a one or two sentence "what and why".
+    // ---------------------------------------------------------------
+    document.querySelectorAll('.cal-info-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const box = document.getElementById(btn.getAttribute('aria-controls'));
+        const open = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!open));
+        box.hidden = open;
+      });
+    });
+
+    // ---------------------------------------------------------------
+    // Step 1: choose upload, paste or manual entry.
+    // ---------------------------------------------------------------
+    const methodTabs = document.querySelectorAll('.cal-method');
+    methodTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        methodTabs.forEach(t => {
+          const selected = t === tab;
+          t.setAttribute('aria-selected', String(selected));
+          document.getElementById(t.getAttribute('aria-controls')).hidden = !selected;
+        });
+      });
+    });
+
+    // File name display and drag and drop. Parsing is left to the calibration script.
+    const fileInput = document.getElementById('lab-file');
+    const fileName = document.getElementById('lab-file-name');
+    const dropzone = document.getElementById('cal-dropzone');
+
+    function showFileNames(files) {
+      fileName.textContent = Array.from(files).map(f => f.name).join(', ');
+    }
+
+    fileInput.addEventListener('change', () => showFileNames(fileInput.files));
+
+    ['dragenter', 'dragover'].forEach(type => {
+      dropzone.addEventListener(type, event => {
+        event.preventDefault();
+        dropzone.classList.add('is-dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(type => {
+      dropzone.addEventListener(type, () => dropzone.classList.remove('is-dragover'));
+    });
+
+    dropzone.addEventListener('drop', event => {
+      event.preventDefault();
+      if (event.dataTransfer.files.length) {
+        fileInput.files = event.dataTransfer.files;
+        showFileNames(fileInput.files);
+        fileInput.dispatchEvent(new Event('change'));
+      }
+    });
+
+    // CSV template. Metadata columns repeat on every row of a test.
+    // CID rows give volumetric strain, CIU rows give excess pore pressure.
+    const CSV_TEMPLATE = [
+      'test_id,test_type,p0_kpa,e0,ocr,axial_strain_pct,q_kpa,p_kpa,vol_strain_pct,du_kpa',
+      'CID-01,CID,100,0.62,1.0,0.00,0.0,100.0,0.00,',
+      'CID-01,CID,100,0.62,1.0,0.50,85.2,128.4,0.12,',
+      'CIU-01,CIU,300,0.78,1.0,0.00,0.0,300.0,,0.0',
+      'CIU-01,CIU,300,0.78,1.0,0.50,96.3,271.4,,60.7',
+    ].join('\n') + '\n';
+
+    document.getElementById('download-template').addEventListener('click', () => {
+      const blob = new Blob([CSV_TEMPLATE], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'norsand_calibration_template.csv';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    // Manual entry: the last column follows the test type, and rows can be added.
+    const manualType = document.getElementById('manual-type');
+    const manualLastCol = document.getElementById('manual-last-col');
+    manualType.addEventListener('change', () => {
+      manualLastCol.innerHTML = manualType.value === 'CID'
+        ? '&epsilon;<sub>v</sub> (%)'
+        : '&Delta;u (kPa)';
+    });
+
+    document.getElementById('manual-add-row').addEventListener('click', () => {
+      const body = document.querySelector('#manual-rows tbody');
+      const row = body.rows[body.rows.length - 1].cloneNode(true);
+      row.querySelectorAll('input').forEach(input => { input.value = ''; });
+      body.appendChild(row);
+    });
+
+    // Column mapping: locked until "Edit mapping", confirmed by "Looks correct".
+    const mappingSelects = document.querySelectorAll('#column-map select');
+    const mappingStatus = document.getElementById('mapping-status');
+    document.getElementById('mapping-edit').addEventListener('click', () => {
+      mappingSelects.forEach(s => { s.disabled = false; });
+      mappingStatus.textContent = '';
+    });
+    document.getElementById('mapping-confirm').addEventListener('click', () => {
+      mappingSelects.forEach(s => { s.disabled = true; });
+      mappingStatus.textContent = '✓ Mapping confirmed';
+    });
+
+    // ---------------------------------------------------------------
+    // Step 2: clicking a test card selects it for the plots.
+    // ---------------------------------------------------------------
+    const testCards = document.querySelectorAll('.cal-test-card');
+    const selectedTestLabel = document.getElementById('review-selected-test');
+
+    function selectCard(card) {
+      testCards.forEach(c => c.classList.toggle('is-selected', c === card));
+      selectedTestLabel.textContent = card.dataset.test;
+    }
+
+    testCards.forEach(card => {
+      card.addEventListener('click', event => {
+        if (event.target.closest('label')) return; // let the checkbox work on its own
+        selectCard(card);
+      });
+      card.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          selectCard(card);
+        }
+      });
+    });
+
+    // ---------------------------------------------------------------
+    // Step 3: show one or both CSL result cards.
+    // ---------------------------------------------------------------
+    const cardSemilog = document.getElementById('csl-card-semilog');
+    const cardCurved = document.getElementById('csl-card-curved');
+    const cslUseField = document.getElementById('csl-use-field');
+
+    function updateCslCards() {
+      const mode = document.querySelector('input[name="csl-model"]:checked').value;
+      cardSemilog.hidden = mode === 'curved';
+      cardCurved.hidden = mode === 'semi_log';
+      cslUseField.classList.toggle('param-hidden', mode !== 'both');
+    }
+
+    document.querySelectorAll('input[name="csl-model"]').forEach(r => r.addEventListener('change', updateCslCards));
+    updateCslCards();
+
+    // ---------------------------------------------------------------
+    // Step 5: number boxes are the primary control. Each slider follows
+    // its box. Relative sliders build a range around the current value.
+    // Fixed sliders use a published range and widen if a value falls outside it.
+    // ---------------------------------------------------------------
+    function niceStep(value) {
+      if (!(value > 0)) return 1;
+      return Math.pow(10, Math.floor(Math.log10(value)) - 2);
+    }
+
+    function formatLimit(v) {
+      return Math.abs(v) >= 1000 ? Math.round(v).toLocaleString() : String(+v.toPrecision(3));
+    }
+
+    function setRange(slider, value) {
+      let min;
+      let max;
+      if (slider.dataset.mode === 'relative') {
+        min = value / 3;
+        max = value * 3;
+      } else {
+        min = Math.min(Number(slider.dataset.min), value);
+        max = Math.max(Number(slider.dataset.max), value);
+      }
+      const step = slider.dataset.mode === 'relative' ? niceStep(value) : 1;
+      slider.min = min;
+      slider.max = max;
+      slider.step = step;
+      slider.value = value;
+      document.getElementById(`${slider.dataset.for}-min`).textContent = formatLimit(min);
+      document.getElementById(`${slider.dataset.for}-max`).textContent = formatLimit(max);
+    }
+
+    document.querySelectorAll('.cal-slider input[type="range"]').forEach(slider => {
+      const box = document.getElementById(slider.dataset.for);
+      setRange(slider, Number(box.value) || 0);
+
+      // Typing a value recentres the range when needed.
+      box.addEventListener('change', () => {
+        const v = Number(box.value);
+        if (!Number.isFinite(v)) return;
+        if (slider.dataset.mode === 'relative' || v < Number(slider.min) || v > Number(slider.max)) {
+          setRange(slider, v);
+        } else {
+          slider.value = v;
+        }
+      });
+
+      slider.addEventListener('input', () => {
+        box.value = slider.value;
+        box.dispatchEvent(new Event('input'));
+      });
+    });
+
+    // Gref starting estimate from SPT N-value.
+    const sptFields = document.getElementById('gref-spt-fields');
+    const grefBox = document.getElementById('cal-gref');
+    const grefSlider = document.getElementById('cal-gref-range');
+    const grefHint = document.getElementById('gref-label-hint');
+
+    function updateSptEstimate() {
+      const n = Number(document.getElementById('spt-n').value);
+      const nu = Number(document.getElementById('cal-nu').value);
+      const m = Number(document.getElementById('cal-m').value);
+      const p = Number(document.getElementById('spt-p').value);
+      const pref = Number(document.getElementById('cal-pref').value) || 100;
+      if (!(n > 0 && p > 0 && nu > -1)) return;
+      const e = 2000 * n;
+      const g = e / (2 * (1 + nu));
+      const gref = g * Math.pow(pref / p, m);
+      document.getElementById('spt-e').textContent = Math.round(e).toLocaleString();
+      document.getElementById('spt-g').textContent = Math.round(g).toLocaleString();
+      grefBox.value = Math.round(gref);
+      setRange(grefSlider, Math.round(gref));
+    }
+
+    function sptSelected() {
+      return document.querySelector('input[name="gref-method"]:checked').value === 'spt';
+    }
+
+    document.querySelectorAll('input[name="gref-method"]').forEach(r => {
+      r.addEventListener('change', () => {
+        sptFields.hidden = !sptSelected();
+        grefHint.innerHTML = sptSelected() ? '&ndash; suggested, editable' : '&ndash; reference shear modulus';
+        if (sptSelected()) updateSptEstimate();
+      });
+    });
+
+    ['spt-n', 'spt-p', 'cal-nu', 'cal-m', 'cal-pref'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => {
+        if (sptSelected()) updateSptEstimate();
+      });
+    });
+
+    grefHint.innerHTML = '&ndash; suggested, editable';
+    updateSptEstimate();
+
+    // Hy stays at zero and locked until state-dependent hardening is switched on.
+    const hyBox = document.getElementById('cal-hy');
+    const hySlider = document.getElementById('cal-hy-range');
+    document.querySelectorAll('input[name="hy-mode"]').forEach(r => {
+      r.addEventListener('change', () => {
+        const on = document.querySelector('input[name="hy-mode"]:checked').value === 'yes';
+        hyBox.disabled = !on;
+        hySlider.disabled = !on;
+        if (!on) {
+          hyBox.value = 0;
+          hySlider.value = 0;
+        }
+      });
+    });
+  </script>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p class="site-footer__copyright">&copy; 2026 NorSand Lab, GeoSRL, McGill University. All rights reserved.</p>
+      <address class="site-footer__contact">
+        <span><strong>Phone</strong> <a href="tel:+10000000000">+1 (000) 000-0000</a></span>
+        <span><strong>Address</strong> Department of Civil Engineering, McGill University, 817 Sherbrooke St W, Montreal, QC H3A 0C3</span>
+        <span><strong>Email</strong> <a href="mailto:fangzhou.liu@mcgill.ca">fangzhou.liu@mcgill.ca</a></span>
+      </address>
+    </div>
+  </footer>
+
+</body>
+</html>

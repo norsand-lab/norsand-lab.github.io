@@ -16,12 +16,14 @@
 <body>
   <header class="site-header">
     <div class="site-header__inner">
-      <span class="site-header__logo"><a href="./index.html"><img src="img/norsand-logo.svg" alt="NorSand Lab" style="height: 60px;"></a></span>
+      <span class="site-header__logo"><a href="./index.html"><img src="img/norsand-logo.svg" alt="NorSand Lab"></a></span>
       <nav class="site-header__nav">
         <a href="./index.html">Home</a>
         <a href="./learn.html">Learn</a>
         <a href="./visualization.html" aria-current="page">Run NorSand</a>
+        <a href="./calibration.html">Calibrate</a>
         <a href="./resources.html">Resources</a>
+        <a href="./about.html">About</a>
       </nav>
     </div>
   </header>
@@ -181,6 +183,7 @@
 
         <div class="param-actions">
           <button type="button" id="run-button" class="run-button">Generate visualization</button>
+          <button type="button" id="download-csv-button" class="download-button" disabled>Download CSV</button>
           <button type="reset" class="reset-button">Reset parameters</button>
         </div>
 
@@ -188,13 +191,11 @@
     </aside>
 
     <main class="content">
-      <section class="content__block">
         <div class="viz-placeholder" id="viz-placeholder">
           <div id="plotDiv">
           </div>
           <script type="py" config="./config.json" src="./gen_vis.py"></script>
         </div>
-      </section>
     </main>
   </div>
 
@@ -215,10 +216,33 @@
       runButton.disabled = false;
     }
 
+    const downloadButton = document.getElementById('download-csv-button');
+    let latestCsv = null;
+
+    function setCsvData(csv) {
+      latestCsv = csv;
+      downloadButton.disabled = false;
+    }
+
     window.showLoading = showLoading;
     window.hideLoading = hideLoading;
+    window.setCsvData = setCsvData;
 
-    runButton.addEventListener('click', showLoading); 
+    runButton.addEventListener('click', showLoading);
+
+    downloadButton.addEventListener('click', () => {
+      if (!latestCsv) return;
+      const testType = document.getElementById('test-type').value;
+      const blob = new Blob([latestCsv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `norsand_${testType}_results.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    });
 
     cslFormSelect.addEventListener('change', () => {
       const isCurved = cslFormSelect.value === 'curved';
@@ -227,6 +251,17 @@
     });
   </script>
  
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p class="site-footer__copyright">&copy; 2026 NorSand Lab, GeoSRL, McGill University. All rights reserved.</p>
+      <address class="site-footer__contact">
+        <span><strong>Phone</strong> <a href="tel:+10000000000">+1 (000) 000-0000</a></span>
+        <span><strong>Address</strong> Department of Civil Engineering, McGill University, 817 Sherbrooke St W, Montreal, QC H3A 0C3</span>
+        <span><strong>Email</strong> <a href="mailto:fangzhou.liu@mcgill.ca">fangzhou.liu@mcgill.ca</a></span>
+      </address>
+    </div>
+  </footer>
 
 </body>
 </html>

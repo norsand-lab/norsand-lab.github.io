@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorSand Lab</title>
+  <link href="https://fonts.googleapis.com/css?family=Inclusive+Sans&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=JetBrains+Mono&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Serif&display=swap" rel="stylesheet" />
+  <link href="css/main.css" rel="stylesheet" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <span class="site-header__logo"><a href="./index.html"><img src="img/norsand-logo.svg" alt="NorSand Lab"></a></span>
+      <nav class="site-header__nav">
+        <a href="./index.html">Home</a>
+        <a href="./learn.html" aria-current="page">Learn</a>
+        <a href="./visualization.html">Run NorSand</a>
+        <a href="./calibration.html">Calibrate</a>
+        <a href="./resources.html">Resources</a>
+        <a href="./about.html">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="sidebar__nav" aria-label="Page sections">
+
+        <p class="sidebar__eyebrow">1. Introduction to NorSand</p>
+        <ul class="sidebar__list">
+          <li><a href="./learn.html">1.1 Understanding NorSand</a></li>
+        </ul>
+
+        <p class="sidebar__eyebrow">2. Core concepts</p>
+        <ul class="sidebar__list">
+          <li><a href="./learn-stress-variables.html">2.1 Stress variables used in triaxial loading</a></li>
+          <li><a href="./learn-critical-state-idea.html">2.2 Critical state idea</a></li>
+          <li><a href="./learn-void-ratio.html">2.3 Void ratio and soil packing</a></li>
+          <li><a href="./learn-critical-state-line.html">2.4 Critical state line</a></li>
+          <li><a href="./learn-state-parameter.html">2.5 State parameter</a></li>
+          <li><a href="./learn-yield-surface.html">2.6 NorSand yield surface</a></li>
+          <li><a href="./learn-image-point.html">2.7 Image point</a></li>
+          <li><a href="./learn-contraction-dilation.html">2.8 Contraction and dilation</a></li>
+          <li><a href="./learn-limiting-dilatancy.html">2.9 Limiting dilatancy and the internal cap</a></li>
+          <li><a href="./learn-hardening-softening.html">2.10 Hardening and softening</a></li>
+          <li><a href="./learn-elastic-stiffness.html">2.11 Elastic stiffness</a></li>
+          <li><a href="./learn-drained-undrained.html">2.12 Drained and undrained loading</a></li>
+          <li><a href="./learn-norsand-parameters.html">2.13 NorSand parameters</a></li>
+        </ul>
+
+        <p class="sidebar__eyebrow">3. Interactive simulations</p>
+        <ul class="sidebar__list">
+          <li><a href="./learn-simulation-parameters.html">3.1 Simulation parameters</a></li>
+          <li><a href="./learn-interactive-simulations.html">3.2 Interactive triaxial simulations</a></li>
+          <li><a href="./learn-validation.html">3.3 Validation</a></li>
+          <li><a href="./learn-continue-learning.html">3.4 Continue learning about NorSand</a></li>
+        </ul>
+
+        <p class="sidebar__eyebrow">&nbsp;</p>
+        <ul class="sidebar__list">
+          <li><a href="./learn-references.html">References</a></li>
+        </ul>
+
+      </nav>
+    </aside>
+
+    <main class="content">
+      <h1>2. Core concepts</h1>
+      <section id="critical-state-line" class="content__block">
+        <h2>2.4 Critical state line</h2>
+        <p>The critical state does not correspond to one single stress or one single void ratio. Instead, there is a range of critical states associated with different effective stress levels. These conditions form the critical state line, or CSL. The CSL is commonly shown in two spaces.</p>
+        <p><strong>CSL in <math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mi mathvariant="bold-italic">p</mi><mo lspace="0em" rspace="0em">&#x2032;</mo></msup><mo>&#x2212;</mo><mi mathvariant="bold-italic">q</mi></mrow></math> space:</strong> In triaxial compression, the critical state line is <math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>q</mi><mo>=</mo><mi>M</mi><msup><mi>p</mi><mo lspace="0em" rspace="0em">&#x2032;</mo></msup></mrow></math>. It passes through the origin with slope equal to the critical-state stress ratio, <em>M</em>.</p>
+        <p><strong>CSL in void ratio&ndash;mean effective stress space:</strong> The CSL also describes how the critical-state void ratio decreases as mean effective stress increases. A commonly used semi-logarithmic form is:</p>
+        <p class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>e</mi><mi>c</mi></msub><mo>=</mo><mi>&#x393;</mi><mo>&#x2212;</mo><msub><mi>&#x3bb;</mi><mrow><mn>1</mn><mn>0</mn></mrow></msub><msub><mrow><mi>log</mi><mo>&#x2061;</mo></mrow><mrow><mn>1</mn><mn>0</mn></mrow></msub><mrow><mo>(</mo><mfrac><msup><mi>p</mi><mo lspace="0em" rspace="0em">&#x2032;</mo></msup><msub><mi>p</mi><mrow><mrow><mi mathvariant="normal">r</mi></mrow><mrow><mi mathvariant="normal">e</mi></mrow><mrow><mi mathvariant="normal">f</mi></mrow></mrow></msub></mfrac><mo>)</mo></mrow></mrow></math></p>
+        <p>where <em>e<sub>c</sub></em> is the critical-state void ratio at the current mean effective stress, <em>Γ</em> is the critical-state void ratio at the reference pressure <em>p<sub>ref</sub></em>, <em>λ<sub>10</sub></em> controls the slope of the CSL in <math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>e</mi><mo>&#x2212;</mo><msub><mrow><mi>log</mi><mo>&#x2061;</mo></mrow><mrow><mn>1</mn><mn>0</mn></mrow></msub><msup><mi>p</mi><mo lspace="0em" rspace="0em">&#x2032;</mo></msup></mrow></math> space, and <em>p<sub>ref</sub></em> is the reference pressure used to make the logarithm dimensionless. Some formulations use the natural logarithm instead of the base-10 logarithm. In that case, the slope parameters are related by:</p>
+        <p class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>&#x3bb;</mi><mo>=</mo><mfrac><msub><mi>&#x3bb;</mi><mrow><mn>1</mn><mn>0</mn></mrow></msub><mrow><mi>ln</mi><mrow><mn>1</mn><mn>0</mn></mrow></mrow></mfrac></mrow></math></p>
+        <p>The implementation associated with this website allows the CSL to be represented in two ways: Semi-logarithmic CSL and</p>
+        <p><strong>Curved CSL</strong></p>
+        <p class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>e</mi><mi>c</mi></msub><mo>=</mo><mi>a</mi><mo>&#x2212;</mo><mi>b</mi><msup><mrow><mo>(</mo><mfrac><msup><mi>p</mi><mo lspace="0em" rspace="0em">&#x2032;</mo></msup><msub><mi>p</mi><mrow><mrow><mi mathvariant="normal">r</mi></mrow><mrow><mi mathvariant="normal">e</mi></mrow><mrow><mi mathvariant="normal">f</mi></mrow></mrow></msub></mfrac><mo>)</mo></mrow><mi>c</mi></msup></mrow></math>
+        <p>The curved form can be useful when a straight line in semi-logarithmic space does not adequately represent the measured critical states over the relevant stress range. The CSL is treated as a material-specific reference relationship for the soil and stress range considered. Changing the initial density or stress state changes the specimen's position relative to the CSL, not the CSL itself. In practice, the CSL should be established from multiple tests covering a suitable range of initial densities and mean effective stresses. These may include drained and undrained tests, provided the specimens are sheared sufficiently for reliable critical-state conditions to be identified.</p>
+      </section>
+      <p class="page-nav">
+        <a href="./learn-void-ratio.html">&larr; 2.3 Void ratio and soil packing</a>
+        &nbsp;|&nbsp;
+        <a href="./learn-state-parameter.html">2.5 State parameter &rarr;</a>
+      </p>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p class="site-footer__copyright">&copy; 2026 NorSand Lab, GeoSRL, McGill University. All rights reserved.</p>
+      <address class="site-footer__contact">
+        <span><strong>Phone</strong> <a href="tel:+10000000000">+1 (000) 000-0000</a></span>
+        <span><strong>Address</strong> Department of Civil Engineering, McGill University, 817 Sherbrooke St W, Montreal, QC H3A 0C3</span>
+        <span><strong>Email</strong> <a href="mailto:fangzhou.liu@mcgill.ca">fangzhou.liu@mcgill.ca</a></span>
+      </address>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorSand Lab</title>
+  <link href="https://fonts.googleapis.com/css?family=Inclusive+Sans&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=JetBrains+Mono&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Serif&display=swap" rel="stylesheet" />
+  <link href="css/main.css" rel="stylesheet" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <span class="site-header__logo"><a href="./index.html"><img src="img/norsand-logo.svg" alt="NorSand Lab"></a></span>
+      <nav class="site-header__nav">
+        <a href="./index.html">Home</a>
+        <a href="./learn.html" aria-current="page">Learn</a>
+        <a href="./visualization.html">Run NorSand</a>
+        <a href="./calibration.html">Calibrate</a>
+        <a href="./resources.html">Resources</a>
+        <a href="./about.html">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="sidebar__nav" aria-label="Page sections">
+
+        <p class="sidebar__eyebrow">1. Introduction to NorSand</p>
+        <ul class="sidebar__list">
+          <li><a href="./learn.html">1.1 Understanding NorSand</a></li>
+        </ul>
+
+        <p class="sidebar__eyebrow">2. Core concepts</p>
+        <ul class="sidebar__list">
+          <li><a href="./learn-stress-variables.html">2.1 Stress variables used in triaxial loading</a></li>
+          <li><a href="./learn-critical-state-idea.html">2.2 Critical state idea</a></li>
+          <li><a href="./learn-void-ratio.html">2.3 Void ratio and soil packing</a></li>
+          <li><a href="./learn-critical-state-line.html">2.4 Critical state line</a></li>
+          <li><a href="./learn-state-parameter.html">2.5 State parameter</a></li>
+          <li><a href="./learn-yield-surface.html">2.6 NorSand yield surface</a></li>
+          <li><a href="./learn-image-point.html">2.7 Image point</a></li>
+          <li><a href="./learn-contraction-dilation.html">2.8 Contraction and dilation</a></li>
+          <li><a href="./learn-limiting-dilatancy.html">2.9 Limiting dilatancy and the internal cap</a></li>
+          <li><a href="./learn-hardening-softening.html">2.10 Hardening and softening</a></li>
+          <li><a href="./learn-elastic-stiffness.html">2.11 Elastic stiffness</a></li>
+          <li><a href="./learn-drained-undrained.html">2.12 Drained and undrained loading</a></li>
+          <li><a href="./learn-norsand-parameters.html">2.13 NorSand parameters</a></li>
+        </ul>
+
+        <p class="sidebar__eyebrow">3. Interactive simulations</p>
+        <ul class="sidebar__list">
+          <li><a href="./learn-simulation-parameters.html">3.1 Simulation parameters</a></li>
+          <li><a href="./learn-interactive-simulations.html">3.2 Interactive triaxial simulations</a></li>
+          <li><a href="./learn-validation.html">3.3 Validation</a></li>
+          <li><a href="./learn-continue-learning.html">3.4 Continue learning about NorSand</a></li>
+        </ul>
+
+        <p class="sidebar__eyebrow">&nbsp;</p>
+        <ul class="sidebar__list">
+          <li><a href="./learn-references.html">References</a></li>
+        </ul>
+
+      </nav>
+    </aside>
+
+    <main class="content">
+      <h1>2. Core concepts</h1>
+      <section id="stress-variables" class="content__block">
+        <h2>2.1 Stress variables used in triaxial loading</h2>
+        <p>This website initially focuses on conventional <span class="tooltip">axisymmetric triaxial compression<span class="tooltiptext">A laboratory test in which a soil specimen, usually cylindrical, is loaded under controlled stress and drainage conditions</span></span>. In this test, the specimen is subjected to a major principal effective stress, <math><msubsup><mi>&sigma;</mi><mn>1</mn><mo>&prime;</mo></msubsup></math>, in the axial direction and two equal minor principal effective stresses, <math><msubsup><mi>&sigma;</mi><mn>2</mn><mo>&prime;</mo></msubsup><mo>=</mo><msubsup><mi>&sigma;</mi><mn>3</mn><mo>&prime;</mo></msubsup></math>, in the radial directions. The mean effective stress is:</p>
+        <p class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>p</mi><mo lspace="0em" rspace="0em">&#x2032;</mo></msup><mo>=</mo><mfrac><mrow><msubsup><mi>&#x3c3;</mi><mn>1</mn><mo lspace="0em" rspace="0em">&#x2032;</mo></msubsup><mo>+</mo><mn>2</mn><msubsup><mi>&#x3c3;</mi><mn>3</mn><mo lspace="0em" rspace="0em">&#x2032;</mo></msubsup></mrow><mn>3</mn></mfrac></math></p>
+        <p>and the deviator stress is</p>
+        <p class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>q</mi><mo>=</mo><msubsup><mi>&#x3c3;</mi><mn>1</mn><mo lspace="0em" rspace="0em">&#x2032;</mo></msubsup><mo>&#x2212;</mo><msubsup><mi>&#x3c3;</mi><mn>3</mn><mo lspace="0em" rspace="0em">&#x2032;</mo></msubsup></mrow></math></p>
+        <p>Their ratio is called the stress ratio:</p>
+        <p class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>&#x3b7;</mi><mo>=</mo><mfrac><mi>q</mi><msup><mi>p</mi><mo lspace="0em" rspace="0em">&#x2032;</mo></msup></mfrac></mrow></math></p>
+        <p>The stress ratio provides a convenient measure of how strongly the specimen is being sheared relative to the pressure confining it. The soil does not respond directly to total stress alone. Its strength and deformation are governed mainly by effective stress, the stress carried through the soil skeleton after accounting for pore-water pressure. This distinction becomes especially important in undrained loading. When water cannot escape, pore-water pressure may increase, causing the effective stress to decrease even though the externally applied total stress continues to increase. In <span class="tooltip">tensor form<span class="tooltiptext">A compact way to write stress relationships using tensor notation</span></span>, the effective-stress principle may be written as</p>
+        <p class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mi>&#x3c3;</mi><mo lspace="0em" rspace="0em" class="tml-prime">&#x2032;</mo></msup><mo>=</mo><mi>&#x3c3;</mi><mo>&#x2212;</mo><mi>u</mi><mi>I</mi></mrow></math></p>
+        <p>where <em>σ</em> is the <span class="tooltip">total stress tensor<span class="tooltiptext">A mathematical representation of the total stress on a soil element in all directions at a point, before subtracting pore-water pressure</span></span>, <em>u</em> is pore-water pressure, and <em>I</em> is the identity tensor.</p>
+      </section>
+      <p class="page-nav">
+        <a href="./learn.html">&larr; 1.1 Understanding NorSand</a>
+        &nbsp;|&nbsp;
+        <a href="./learn-critical-state-idea.html">2.2 Critical-state idea &rarr;</a>
+      </p>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p class="site-footer__copyright">&copy; 2026 NorSand Lab, GeoSRL, McGill University. All rights reserved.</p>
+      <address class="site-footer__contact">
+        <span><strong>Phone</strong> <a href="tel:+10000000000">+1 (000) 000-0000</a></span>
+        <span><strong>Address</strong> Department of Civil Engineering, McGill University, 817 Sherbrooke St W, Montreal, QC H3A 0C3</span>
+        <span><strong>Email</strong> <a href="mailto:fangzhou.liu@mcgill.ca">fangzhou.liu@mcgill.ca</a></span>
+      </address>
+    </div>
+  </footer>
+
+</body>
+</html>

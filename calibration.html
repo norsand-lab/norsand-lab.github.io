@@ -9,6 +9,9 @@
   <link href="https://fonts.googleapis.com/css?family=JetBrains+Mono&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css?family=Roboto+Serif&display=swap" rel="stylesheet" />
   <link href="css/main.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://pyscript.net/releases/2026.6.1/core.css" />
+  <script type="module" src="https://pyscript.net/releases/2026.6.1/core.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 
   <!-- Page-specific styles for the calibration workflow. Move into css/main.css once the layout is settled. -->
   <style>
@@ -587,6 +590,56 @@
       min-height: 440px;
     }
 
+    /* Once a chart is drawn, the placeholder styling goes. */
+    .cal-plot.is-plotted {
+      display: block;
+      min-height: 0;
+      padding: 8px;
+      border-style: solid;
+    }
+
+    .cal-engine {
+      font-family: var(--font-ui);
+      font-size: 12px;
+      color: var(--color-text-faint);
+      margin: 0 0 16px;
+    }
+
+    .cal-engine.is-ready {
+      color: rgba(21, 128, 61, 1);
+    }
+
+    .cal-status {
+      font-size: 13px;
+      color: var(--color-text);
+      background: var(--color-panel);
+      border: 1px solid var(--color-border);
+      border-left: 3px solid var(--color-accent);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin: 0 0 16px;
+    }
+
+    .cal-status[hidden],
+    .cal-warning[hidden] {
+      display: none;
+    }
+
+    .cal-table td.cal-checks {
+      white-space: normal;
+      min-width: 220px;
+      color: var(--color-text-muted);
+    }
+
+    .cal-table tr.cal-row {
+      cursor: pointer;
+    }
+
+    .cal-table tr.cal-row:hover td,
+    .cal-table tr.is-active td {
+      background: rgba(178, 140, 53, 0.08);
+    }
+
     .cal-plot__title {
       font-family: var(--font-ui);
       font-weight: 700;
@@ -883,10 +936,11 @@
         </ol>
 
         <h2 class="cal-section-title">How would you like to provide your data?</h2>
+        <p class="cal-engine" id="engine-status" aria-live="polite">Loading the calculation engine. This takes a few seconds the first time.</p>
         <div class="cal-methods" role="tablist" aria-label="Data input method">
           <button type="button" class="cal-method" role="tab" id="method-upload-tab" aria-selected="true" aria-controls="method-upload">
             <span class="cal-method__title">Upload laboratory file</span>
-            <span class="cal-method__desc">CSV or Excel. One file per test, or one file with a test ID column.</span>
+            <span class="cal-method__desc">CSV or text. One file per test, or one file with a test ID column.</span>
           </button>
           <button type="button" class="cal-method" role="tab" id="method-paste-tab" aria-selected="false" aria-controls="method-paste">
             <span class="cal-method__title">Paste from Excel</span>
@@ -905,7 +959,7 @@
               <div class="param-group__title">Upload a file</div>
               <label class="cal-dropzone" id="cal-dropzone" for="lab-file">
                 <span>Drop a file here or choose one</span>
-                <input type="file" id="lab-file" name="lab-file" accept=".csv,.txt,.xlsx,.xls" multiple>
+                <input type="file" id="lab-file" name="lab-file" accept=".csv,.txt,.tsv" multiple>
                 <span class="cal-filename" id="lab-file-name"></span>
               </label>
             </div>
@@ -983,6 +1037,8 @@
           </div>
         </div>
 
+        <div class="cal-status" id="import-status" aria-live="polite" hidden></div>
+
         <h2 class="cal-section-title">We detected</h2>
         <div class="cal-workspace">
           <div class="param-group cal-wide">
@@ -995,17 +1051,24 @@
                 </thead>
                 <tbody>
                   <tr class="cal-table__group"><td colspan="3">Main quantities</td></tr>
-                  <tr><td>Test ID</td><td><select data-quantity="test_id" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Waiting for data</span></td></tr>
-                  <tr><td>Axial strain, &epsilon;<sub>1</sub></td><td><select data-quantity="eps1" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Waiting for data</span></td></tr>
+                  <tr><td>Test ID</td><td><select data-quantity="tid" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Waiting for data</span></td></tr>
+                  <tr><td>Axial strain, &epsilon;<sub>1</sub></td><td><select data-quantity="e1" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Waiting for data</span></td></tr>
                   <tr><td>Deviator stress, q</td><td><select data-quantity="q" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Waiting for data</span></td></tr>
                   <tr><td>Mean effective stress, p&prime;</td><td><select data-quantity="p" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Waiting for data</span></td></tr>
-                  <tr><td>Volumetric strain, &epsilon;<sub>v</sub> (CID)</td><td><select data-quantity="epsv" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Waiting for data</span></td></tr>
-                  <tr><td>Pore pressure, &Delta;u (CIU)</td><td><select data-quantity="du" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Waiting for data</span></td></tr>
+                  <tr><td>Volumetric strain, &epsilon;<sub>v</sub> (CID)</td><td><select data-quantity="ev" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Waiting for data</span></td></tr>
+                  <tr><td>Excess pore pressure, &Delta;u (CIU)</td><td><select data-quantity="du" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Waiting for data</span></td></tr>
+                  <tr><td>Void ratio, e</td><td><select data-quantity="e" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Waiting for data</span></td></tr>
                   <tr class="cal-table__group"><td colspan="3">Alternative inputs, used to derive missing quantities</td></tr>
-                  <tr><td>Effective stresses, &sigma;&prime;<sub>1</sub> and &sigma;&prime;<sub>3</sub></td><td><select data-quantity="sig_eff" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Optional</span></td></tr>
-                  <tr><td>Total stresses, &sigma;<sub>1</sub> and &sigma;<sub>3</sub></td><td><select data-quantity="sig_total" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Optional</span></td></tr>
+                  <tr><td>Effective stress, &sigma;&prime;<sub>1</sub></td><td><select data-quantity="s1e" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Optional</span></td></tr>
+                  <tr><td>Effective stress, &sigma;&prime;<sub>3</sub></td><td><select data-quantity="s3e" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Optional</span></td></tr>
+                  <tr><td>Total stress, &sigma;<sub>1</sub></td><td><select data-quantity="s1" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Optional</span></td></tr>
+                  <tr><td>Total stress, &sigma;<sub>3</sub></td><td><select data-quantity="s3" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Optional</span></td></tr>
                   <tr><td>Pore pressure, u</td><td><select data-quantity="u" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Optional</span></td></tr>
-                  <tr><td>Void ratio, e</td><td><select data-quantity="e" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Optional</span></td></tr>
+                  <tr class="cal-table__group"><td colspan="3">Test details, if they are columns in the file</td></tr>
+                  <tr><td>Test type (CID or CIU)</td><td><select data-quantity="type" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Optional</span></td></tr>
+                  <tr><td>Initial void ratio, e<sub>0</sub></td><td><select data-quantity="e0" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Optional</span></td></tr>
+                  <tr><td>Initial mean effective stress, p&prime;<sub>0</sub></td><td><select data-quantity="p0" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Optional</span></td></tr>
+                  <tr><td>OCR</td><td><select data-quantity="ocr" disabled><option>Not detected</option></select></td><td><span class="badge badge--soon">Optional</span></td></tr>
                 </tbody>
               </table>
             </div>
@@ -1041,6 +1104,7 @@
                 <option value="decimal">Decimal</option>
               </select>
             </div>
+            <p class="cal-note">The sign convention applies to axial strain and stresses. Volumetric strain has its own setting.</p>
             <div class="param-field">
               <label for="sign-convention">Sign convention</label>
               <select id="sign-convention" name="sign-convention">
@@ -1085,10 +1149,11 @@
                     <th>Initial e<sub>0</sub></th>
                     <th>OCR, if known</th>
                     <th>Rows</th>
+                    <th>Checks</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="cal-table__empty"><td colspan="6">Tests appear here after data is imported.</td></tr>
+                  <tr class="cal-table__empty"><td colspan="7">Tests appear here after data is imported.</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1151,7 +1216,8 @@
         <div class="cal-workspace" style="margin-top: 16px;">
           <div class="param-group">
             <div class="param-group__title">Exclude part of this test</div>
-            <p class="cal-note">Use this for unreliable intervals, such as data after a shear band formed. Excluded data is kept and greyed out, never deleted.</p>
+            <p class="cal-note">Use this for unreliable intervals, such as data after a shear band formed. Excluded data is kept and greyed out, never deleted. The CSL candidate in step 3 is the last point that is not excluded.</p>
+            <p class="cal-note" id="exclude-list">Nothing excluded from this test.</p>
             <div class="param-field">
               <label for="exclude-from">From &epsilon;<sub>1</sub></label>
               <input type="number" id="exclude-from" name="exclude-from" step="any">
@@ -1197,7 +1263,7 @@
             <div class="equation">&psi; = e &minus; e<sub>c</sub>(p&prime;)</div>
           </dd>
         </dl>
-        <p class="cal-lead">Select or confirm the critical-state point for each test. Accepted points are used to fit the line.</p>
+        <p class="cal-lead">The last point of each included test is the candidate. Accept it only if the test has levelled off. Accepted points are used to fit the line, and the fit updates as you accept or reject points.</p>
 
         <h2 class="cal-section-title">Select and confirm critical-state points</h2>
         <p class="cal-warning">A test that ends at 20% strain has not necessarily reached critical state. Accept a point only when q, p&prime; and the volume or pore pressure have stopped changing, and the dilatancy D is close to zero.</p>
@@ -1217,7 +1283,7 @@
         </div>
 
         <h2 class="cal-section-title">Has the test reached critical state?</h2>
-        <p class="cal-note">These plots show the end of the selected test. Both should level off at critical state.</p>
+        <p class="cal-note">Click a row in the table above to choose the test. Both plots should level off in the shaded last 2% of strain.</p>
         <div class="cal-plot-grid">
           <div class="cal-plot" id="csl-check-d"><span class="cal-plot__title">D &ndash; &epsilon;<sub>1</sub></span><span>Dilatancy should approach zero</span></div>
           <div class="cal-plot" id="csl-check-q"><span class="cal-plot__title">q &ndash; &epsilon;<sub>1</sub></span><span>Stress should stop changing</span></div>
@@ -1245,23 +1311,30 @@
                 <option value="curved">Curved</option>
               </select>
             </div>
+            <div class="param-field">
+              <label>M at the candidate points</label>
+              <output class="cal-output" id="fit-mend">&ndash;</output>
+            </div>
+            <p class="cal-note">A rough check from q = M p&prime; through the points. M<sub>tc</sub> itself is calibrated in step 4.</p>
             <div class="cal-inline-buttons">
               <button type="button" class="run-button" id="fit-csl-button">Fit CSL</button>
             </div>
+            <p class="cal-note" id="fit-status" aria-live="polite" style="margin: 12px 0 0;">Accept candidate points to fit the CSL.</p>
           </div>
 
           <div class="cal-fit-cards">
             <div class="param-group" id="csl-card-semilog">
               <div class="param-group__title">Semi-log</div>
-              <p class="cal-formula">e<sub>c</sub> = &Gamma; &minus; &lambda; log<sub>10</sub>(p&prime;/p<sub>ref</sub>)</p>
-              <div class="param-field"><label>&Gamma;</label><output class="cal-output" id="fit-gamma">&ndash;</output></div>
-              <div class="param-field"><label>&lambda;</label><output class="cal-output" id="fit-lambda">&ndash;</output></div>
+              <p class="cal-formula">e<sub>c</sub> = &Gamma; &minus; &lambda; log<sub>10</sub>(p&prime;/<span id="fit-pref-semilog">p_ref</span>)</p>
+              <div class="param-field"><label>&Gamma; at p<sub>ref</sub></label><output class="cal-output" id="fit-gamma">&ndash;</output></div>
+              <div class="param-field"><label>&Gamma; at 1 kPa (NorSand input)</label><output class="cal-output" id="fit-gamma1">&ndash;</output></div>
+              <div class="param-field"><label>&lambda; (log<sub>10</sub>)</label><output class="cal-output" id="fit-lambda">&ndash;</output></div>
               <div class="param-field"><label>R&sup2;</label><output class="cal-output" id="fit-semilog-r2">&ndash;</output></div>
               <div class="param-field"><label>RMSE</label><output class="cal-output" id="fit-semilog-rmse">&ndash;</output></div>
             </div>
             <div class="param-group" id="csl-card-curved">
               <div class="param-group__title">Curved</div>
-              <p class="cal-formula">e<sub>c</sub> = C<sub>a</sub> &minus; C<sub>b</sub>(p&prime;/p<sub>ref</sub>)<sup>C<sub>c</sub></sup></p>
+              <p class="cal-formula">e<sub>c</sub> = C<sub>a</sub> &minus; C<sub>b</sub>(p&prime;/<span id="fit-pref-curved">p_ref</span>)<sup>C<sub>c</sub></sup></p>
               <div class="param-field"><label>C<sub>a</sub></label><output class="cal-output" id="fit-ca">&ndash;</output></div>
               <div class="param-field"><label>C<sub>b</sub></label><output class="cal-output" id="fit-cb">&ndash;</output></div>
               <div class="param-field"><label>C<sub>c</sub></label><output class="cal-output" id="fit-cc">&ndash;</output></div>
@@ -1271,9 +1344,14 @@
           </div>
         </div>
 
+        <div class="cal-inline-buttons" style="margin-top: 16px;">
+          <button type="button" class="download-button" id="csl-download-summary">Download CSL summary (.txt)</button>
+          <button type="button" class="download-button" id="csl-download-points">Download candidate points (.csv)</button>
+        </div>
+
         <div class="cal-pager">
           <button type="button" class="reset-button" data-nav="prev">Back</button>
-          <button type="button" class="run-button" data-nav="next">Accept CSL and continue &rarr;</button>
+          <button type="button" class="run-button" data-nav="next" id="csl-accept">Accept CSL and continue &rarr;</button>
         </div>
       </section>
 
@@ -1627,6 +1705,10 @@
           btn.removeAttribute('aria-current');
         }
       });
+      // Charts drawn while their step was hidden need resizing once it is shown.
+      if (window.Plotly) {
+        document.getElementById(`step-${n}`).querySelectorAll('.js-plotly-plot').forEach(d => Plotly.Plots.resize(d));
+      }
       if (fromUser) {
         history.replaceState(null, '', `#step-${n}`);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1683,7 +1765,7 @@
       });
     });
 
-    // File name display and drag and drop. Parsing is left to the calibration script.
+    // File name display and drag and drop. calibrate.py reads the files.
     const fileInput = document.getElementById('lab-file');
     const fileName = document.getElementById('lab-file-name');
     const dropzone = document.getElementById('cal-dropzone');
@@ -1764,29 +1846,7 @@
       mappingStatus.textContent = '✓ Mapping confirmed';
     });
 
-    // ---------------------------------------------------------------
-    // Step 2: clicking a test card selects it for the plots.
-    // ---------------------------------------------------------------
-    const testCards = document.querySelectorAll('.cal-test-card');
-    const selectedTestLabel = document.getElementById('review-selected-test');
-
-    function selectCard(card) {
-      testCards.forEach(c => c.classList.toggle('is-selected', c === card));
-      selectedTestLabel.textContent = card.dataset.test;
-    }
-
-    testCards.forEach(card => {
-      card.addEventListener('click', event => {
-        if (event.target.closest('label')) return; // let the checkbox work on its own
-        selectCard(card);
-      });
-      card.addEventListener('keydown', event => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          selectCard(card);
-        }
-      });
-    });
+    // Step 2 test cards, step 3 candidate points and all charts are handled by calibrate.py.
 
     // ---------------------------------------------------------------
     // Step 3: show one or both CSL result cards.
@@ -1917,6 +1977,9 @@
       });
     });
   </script>
+
+  <!-- Steps 1 to 3: import, review and CSL fitting (Python, runs in the browser). -->
+  <script type="py" config="./calibration_config.json" src="./calibrate.py"></script>
 
   <footer class="site-footer">
     <div class="site-footer__inner">

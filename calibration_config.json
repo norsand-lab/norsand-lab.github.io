@@ -2,6 +2,13 @@
     "packages": ["numpy", "pandas"],
     "files": {
     "./modules/calibration_core.py": "./modules/calibration_core.py",
+    "./modules/plasticity_core.py": "./modules/plasticity_core.py",
+    "./modules/trial_core.py": "./modules/trial_core.py",
+    "./modules/common_core.py": "./modules/common_core.py",
+    "./modules/norsand_v3/__init__.py": "./modules/norsand_v3/__init__.py",
+    "./modules/norsand_v3/_roots.py": "./modules/norsand_v3/_roots.py",
+    "./modules/norsand_v3/geomechanics.py": "./modules/norsand_v3/geomechanics.py",
+    "./modules/norsand_v3/norsand_core.py": "./modules/norsand_v3/norsand_core.py",
     "./modules/geomechanics.py": "./modules/geomechanics.py",
     "./modules/norsand_core.py": "./modules/norsand_core.py"
   }

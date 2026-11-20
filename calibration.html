@@ -664,17 +664,27 @@
       margin-right: 6px;
     }
 
+    /* Matches the charts: laboratory solid dark line, NorSand dashed gold line. */
     .cal-legend__lab::before {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--color-text-muted);
+      width: 18px;
+      height: 2px;
+      background: var(--color-dark);
     }
 
     .cal-legend__model::before {
       width: 18px;
-      height: 2px;
-      background: var(--color-accent);
+      height: 0;
+      border-top: 2px dashed var(--color-accent);
+    }
+
+    .cal-legend__state::before {
+      content: "";
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 6px;
+      width: 18px;
+      height: 0;
+      border-top: 2px dotted #2563eb;
     }
 
     /* ---------- Buttons, checkboxes, radios ---------- */
@@ -820,6 +830,24 @@
 
     .param-field input[type="number"]:disabled {
       opacity: 0.5;
+    }
+
+    .cal-trial-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 12px;
+    }
+
+    .cal-select {
+      min-width: 180px;
+      padding: 6px 8px;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-ui);
+      font-size: 13px;
     }
 
     .cal-subhead {
@@ -1372,19 +1400,21 @@
             <div class="equation">&eta; = q/p&prime; &nbsp;&nbsp; D = d&epsilon;<sub>v</sub><sup>p</sup> / d&epsilon;<sub>q</sub><sup>p</sup> &nbsp;&nbsp; &epsilon;<sub>q</sub> = &epsilon;<sub>1</sub> &minus; &epsilon;<sub>v</sub>/3</div>
           </dd>
         </dl>
-        <p class="cal-lead">The state parameter is calculated at every data point using the CSL from step 3. Each dense drained test then gives one maximum-dilation point.</p>
+        <p class="cal-lead">&psi; is calculated at every data point with the CSL accepted in step 3. Each dense drained test then gives one pair of peak values, D<sub>min</sub> and &eta;<sub>max</sub>, and those pairs give M<sub>tc</sub>, N and &chi;<sub>tc</sub>.</p>
+        <p class="cal-warning" id="plast-status">Fit the CSL in step 3 first. &psi; depends on it.</p>
 
         <ol class="cal-flow" aria-label="Calculation sequence">
           <li>Lab data</li>
           <li>Calculate e</li>
           <li>CSL gives e<sub>c</sub></li>
           <li>Calculate &psi;</li>
-          <li>Identify maximum-dilation points</li>
+          <li>Find D<sub>min</sub> and &eta;<sub>max</sub></li>
           <li>Fit M<sub>tc</sub>, N and &chi;<sub>tc</sub></li>
         </ol>
 
         <!-- 4A -->
-        <h2 class="cal-section-title"><span class="cal-section-title__tag">4A</span> Examine each dense drained test</h2>
+        <h2 class="cal-section-title"><span class="cal-section-title__tag">4A</span> Examine each drained test</h2>
+        <p class="cal-note">D is the measured dilatancy from Jefferies &amp; Been (2016) Eq. 9.2: the slope from row n&minus;2 to row n+2, in the order the rows were recorded, with &epsilon;<sub>q</sub> = &epsilon;<sub>1</sub> &minus; &epsilon;<sub>v</sub>/3. Nothing is smoothed, so noisy data shows up as noise. D<sub>min</sub> and &eta;<sub>max</sub> are taken separately and need not occur at the same strain.</p>
         <div class="param-group">
           <div class="param-group__title">
             <span id="examine-test-name">No drained tests yet</span>
@@ -1396,36 +1426,34 @@
           </div>
           <div class="cal-examine">
             <div class="cal-plot-grid">
-              <div class="cal-plot" id="plot-eta-d"><span class="cal-plot__title">&eta; &ndash; D</span><span>Maximum dilation is marked automatically</span></div>
+              <div class="cal-plot" id="plot-eta-eps1"><span class="cal-plot__title">&eta; &ndash; &epsilon;<sub>1</sub></span><span>Stress ratio, with &eta;<sub>max</sub> marked</span></div>
+              <div class="cal-plot" id="plot-d-eps1"><span class="cal-plot__title">D &ndash; &epsilon;<sub>1</sub></span><span>Measured dilatancy, with D<sub>min</sub> marked</span></div>
+              <div class="cal-plot" id="plot-eta-d"><span class="cal-plot__title">&eta; &ndash; D</span><span>Stress&ndash;dilatancy path</span></div>
               <div class="cal-plot" id="plot-psi-eps1"><span class="cal-plot__title">&psi; &ndash; &epsilon;<sub>1</sub></span><span>State parameter through the test</span></div>
             </div>
             <div>
-              <div class="cal-subhead" style="margin-top: 0;">At maximum dilation</div>
+              <div class="cal-subhead" style="margin-top: 0;">Peak values</div>
               <div class="param-field"><label>D<sub>min</sub></label><output class="cal-output" id="examine-dmin">&ndash;</output></div>
-              <div class="param-field"><label>&eta;</label><output class="cal-output" id="examine-eta">&ndash;</output></div>
-              <div class="param-field"><label>&psi;</label><output class="cal-output" id="examine-psi">&ndash;</output></div>
-              <label class="cal-checkbox" style="margin-top: 12px;"><input type="checkbox" id="examine-accept"> <span>&#10003; Accept point</span></label>
-              <div class="cal-subhead">Dilatancy settings</div>
-              <div class="param-field">
-                <label for="smooth-window">Smoothing window</label>
-                <input type="number" id="smooth-window" name="smooth-window" value="11" step="2" min="3">
-                <span class="param-unit">pts</span>
-              </div>
-              <label class="cal-checkbox"><input type="checkbox" id="remove-elastic" name="remove-elastic" checked> <span>Use plastic strains only</span></label>
-              <p class="cal-note">D is the slope of measured curves, so the data is smoothed first. Increase the window if the &eta;&ndash;D plot looks jagged.</p>
+              <div class="param-field"><label>&eta;<sub>max</sub></label><output class="cal-output" id="examine-eta">&ndash;</output></div>
+              <div class="param-field"><label>&psi; at D<sub>min</sub></label><output class="cal-output" id="examine-psi">&ndash;</output></div>
+              <div class="param-field"><label>&psi;<sub>0</sub>, initial</label><output class="cal-output" id="examine-psi0">&ndash;</output></div>
+              <div class="param-field"><label>Strain between the peaks</label><output class="cal-output" id="examine-gap">&ndash;</output></div>
+              <label class="cal-checkbox" style="margin-top: 12px;"><input type="checkbox" id="examine-accept"> <span>Use as a dense test for M<sub>tc</sub>, N and &chi;<sub>tc</sub></span></label>
+              <p class="cal-note">Tests that start denser than critical (&psi;<sub>0</sub> &lt; 0) and dilate (D<sub>min</sub> &lt; 0) are ticked as a starting suggestion. Untick a test if its peaks look unreliable, for example if they are far apart or D is very noisy.</p>
+              <p class="cal-note" id="examine-warnings"></p>
             </div>
           </div>
         </div>
 
         <!-- 4B -->
-        <h2 class="cal-section-title"><span class="cal-section-title__tag">4B</span> Combine all tests</h2>
+        <h2 class="cal-section-title"><span class="cal-section-title__tag">4B</span> <span>Dense-test peak points</span></h2>
         <div class="cal-table-wrap">
           <table class="cal-table" id="dmin-table">
             <thead>
-              <tr><th>Test</th><th>&psi; at max dilation</th><th>D<sub>min</sub></th><th>&eta;</th><th>Accepted</th></tr>
+              <tr><th>Use</th><th>Test</th><th>&psi;<sub>0</sub></th><th>D<sub>min</sub></th><th>&eta;<sub>max</sub></th><th>&psi; at D<sub>min</sub></th><th>&epsilon;<sub>1</sub> at D<sub>min</sub> (%)</th><th>&epsilon;<sub>1</sub> at &eta;<sub>max</sub> (%)</th></tr>
             </thead>
             <tbody>
-              <tr class="cal-table__empty"><td colspan="5">Accepted points from 4A appear here.</td></tr>
+              <tr class="cal-table__empty"><td colspan="8">Drained tests appear here after the CSL is fitted.</td></tr>
             </tbody>
           </table>
         </div>
@@ -1434,22 +1462,80 @@
         <h2 class="cal-section-title"><span class="cal-section-title__tag">4C</span> Calculate parameters</h2>
         <div class="cal-workspace">
           <div class="param-group">
-            <div class="param-group__title">Calculated parameters</div>
-            <div class="param-field"><label><span class="param-symbol"><i>M<sub>tc</sub></i></span> &ndash; critical friction ratio</label><output class="cal-output" id="fit-mtc">&ndash;</output></div>
-            <div class="param-field"><label><span class="param-symbol"><i>N</i></span> &ndash; volumetric coupling</label><output class="cal-output" id="fit-n">&ndash;</output></div>
-            <div class="param-field"><label><span class="param-symbol"><i>&chi;<sub>tc</sub></i></span> &ndash; dilatancy constant</label><output class="cal-output" id="fit-chi">&ndash;</output></div>
+            <div class="param-group__title">Least squares</div>
+            <div class="param-field"><label><span class="param-symbol"><i>M<sub>tc</sub></i></span></label><output class="cal-output" id="ls-mtc">&ndash;</output></div>
+            <div class="param-field"><label><span class="param-symbol"><i>N</i></span></label><output class="cal-output" id="ls-n">&ndash;</output></div>
+            <div class="param-field"><label><span class="param-symbol"><i>&chi;<sub>tc</sub></i></span></label><output class="cal-output" id="ls-chi">&ndash;</output></div>
+            <div class="param-field"><label>RMSE of &eta;<sub>max</sub></label><output class="cal-output" id="ls-rmse-eta">&ndash;</output></div>
+            <div class="param-field"><label>RMSE of D<sub>min</sub></label><output class="cal-output" id="ls-rmse-d">&ndash;</output></div>
             <p class="cal-formula" style="margin-top: 12px;">&eta;<sub>max</sub> = M<sub>tc</sub> &minus; (1 &minus; N) D<sub>min</sub></p>
             <p class="cal-formula">D<sub>min</sub> = &chi;<sub>tc</sub> &psi;</p>
+            <p class="cal-note" id="plast-fit-status" aria-live="polite"></p>
           </div>
-          <div class="cal-plot-grid">
+
+          <div class="param-group">
+            <div class="param-group__title">Adopted values</div>
+            <p class="cal-note">Start from least squares. Changing M<sub>tc</sub> refits N for that M<sub>tc</sub>. N and &chi;<sub>tc</sub> can also be set by hand.</p>
+            <div class="param-field">
+              <label for="cal-mtc"><span class="param-symbol"><i>M<sub>tc</sub></i></span> &ndash; critical friction ratio</label>
+              <input type="number" id="cal-mtc" step="0.001">
+            </div>
+            <div class="cal-slider"><span class="cal-slider__lim">1.0</span><input type="range" id="cal-mtc-range" min="1" max="2" step="0.001" aria-label="Mtc slider"><span class="cal-slider__lim">2.0</span></div>
+            <div class="param-field">
+              <label for="cal-n"><span class="param-symbol"><i>N</i></span> &ndash; volumetric coupling</label>
+              <input type="number" id="cal-n" step="0.001">
+            </div>
+            <div class="cal-slider"><span class="cal-slider__lim">0</span><input type="range" id="cal-n-range" min="0" max="1.3" step="0.001" aria-label="N slider"><span class="cal-slider__lim">1.3</span></div>
+            <div class="param-field">
+              <label for="cal-chi"><span class="param-symbol"><i>&chi;<sub>tc</sub></i></span> &ndash; dilatancy constant</label>
+              <input type="number" id="cal-chi" step="0.001">
+            </div>
+            <div class="cal-slider"><span class="cal-slider__lim">0</span><input type="range" id="cal-chi-range" min="0" max="12" step="0.001" aria-label="chi slider"><span class="cal-slider__lim">12</span></div>
+            <div class="param-field"><label>RMSE of &eta;<sub>max</sub></label><output class="cal-output" id="fit-rmse-eta">&ndash;</output></div>
+            <div class="param-field"><label>RMSE of D<sub>min</sub></label><output class="cal-output" id="fit-rmse-d">&ndash;</output></div>
+            <label class="cal-subhead" for="plast-reason" style="display: block;">Reason for any change</label>
+            <textarea class="cal-textarea" id="plast-reason" style="min-height: 64px;" placeholder="Example: the CIU stress paths support Mtc = ...; the dense-test trend supports N = ..."></textarea>
+            <div class="cal-inline-buttons" style="margin-top: 10px;">
+              <button type="button" class="reset-button" id="plast-reset">Reset to least squares</button>
+            </div>
+            <p class="cal-note" style="margin-top: 10px;">RMSE describes the fit to the dense tests only. It does not prove the parameters are right.</p>
+          </div>
+
+          <div class="cal-plot-grid cal-wide">
             <div class="cal-plot" id="plot-etamax-dmin"><span class="cal-plot__title">&eta;<sub>max</sub> &ndash; D<sub>min</sub></span><span>Intercept gives M<sub>tc</sub>, slope gives N</span></div>
             <div class="cal-plot" id="plot-dmin-psi"><span class="cal-plot__title">D<sub>min</sub> &ndash; &psi;</span><span>Slope gives &chi;<sub>tc</sub></span></div>
           </div>
         </div>
 
+        <!-- 4D -->
+        <h2 class="cal-section-title"><span class="cal-section-title__tag">4D</span> <span>Check M<sub>tc</sub> against the other tests</span></h2>
+        <p class="cal-note">The loose drained tests and the undrained tests are not used in the fit. Their late stress ratio is a candidate value of M<sub>tc</sub>, but only if the test truly reached critical state: stable q, p&prime; and e, with D staying near zero. The step 3 column shows whether you accepted that test's end point.</p>
+        <div class="cal-table-wrap">
+          <table class="cal-table" id="mtc-check">
+            <thead>
+              <tr><th>Test</th><th>CID / CIU</th><th>Last q/p&prime;</th><th>Late median q/p&prime;</th><th>Late range of q/p&prime;</th><th>Late median D</th><th>Last q/p&prime; &minus; M<sub>tc</sub></th><th>Step 3</th></tr>
+            </thead>
+            <tbody>
+              <tr class="cal-table__empty"><td colspan="8">The other tests appear here.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="cal-note" id="mtc-check-summary" style="margin-top: 8px;"></p>
+        <div class="cal-plot-grid" style="margin-top: 16px;">
+          <div class="cal-plot" id="plot-loose-eta"><span class="cal-plot__title">Loose CID: &eta; &ndash; &epsilon;<sub>1</sub></span><span>Should level off at M<sub>tc</sub></span></div>
+          <div class="cal-plot" id="plot-loose-d"><span class="cal-plot__title">Loose CID: D &ndash; &epsilon;<sub>1</sub></span><span>Should stay near zero</span></div>
+          <div class="cal-plot" id="plot-ciu-pq"><span class="cal-plot__title">CIU: p&prime; &ndash; q</span><span>Paths should end on q = M<sub>tc</sub> p&prime;</span></div>
+        </div>
+
+        <div class="cal-inline-buttons" style="margin-top: 16px;">
+          <button type="button" class="download-button" id="plast-download-json">Download adopted parameters (.json)</button>
+          <button type="button" class="download-button" id="plast-download-csv">Download dense-point residuals (.csv)</button>
+          <button type="button" class="download-button" id="plast-download-report">Download step 4 report (.txt)</button>
+        </div>
+
         <div class="cal-pager">
           <button type="button" class="reset-button" data-nav="prev">Back</button>
-          <button type="button" class="run-button" data-nav="next">Accept parameters &rarr;</button>
+          <button type="button" class="run-button" data-nav="next" id="plast-accept">Accept parameters &rarr;</button>
         </div>
       </section>
 
@@ -1468,17 +1554,33 @@
           <dt>Why are we doing it?</dt>
           <dd>Stiffness and hardening cannot be read off a plot, so they are found by comparing the model with the measured response.</dd>
         </dl>
-        <p class="cal-lead">The model reruns every time a parameter changes. Type an exact value in a box, or drag its slider to see how sensitive the fit is. OCR is not calibrated here. Each test uses the OCR entered in step 1.</p>
+        <p class="cal-lead">Choose a test, set trial values, run NorSand and compare it with the laboratory curves. Change the values and run again. Nothing is fitted automatically and no trial is adopted on its own. The CSL comes from step 3 and M<sub>tc</sub>, N and &chi;<sub>tc</sub> from step 4.</p>
+        <p class="cal-warning" id="trial-status">Fit the CSL in step 3 and calibrate M<sub>tc</sub>, N and &chi;<sub>tc</sub> in step 4 first.</p>
 
-        <div class="cal-tune">
+        <div class="param-group">
+          <div class="param-group__title">Test to simulate</div>
+          <div class="cal-trial-bar">
+            <label for="trial-test" class="cal-subhead" style="margin: 0;">Test</label>
+            <select id="trial-test" class="cal-select"><option value="">No tests yet</option></select>
+            <span class="cal-note" id="trial-test-info" style="margin: 0;"></span>
+          </div>
+          <div class="cal-inline-buttons" style="margin-top: 12px;">
+            <button type="button" class="run-button" id="trial-run" disabled>Run this test</button>
+            <button type="button" class="download-button" id="trial-run-all" disabled>Run all tests with their own values</button>
+            <button type="button" class="reset-button" id="trial-copy-all" disabled>Copy G<sub>ref</sub>, H<sub>0</sub>, H<sub>y</sub>, &nu; and m to all tests</button>
+          </div>
+          <p class="cal-note" id="trial-run-status" aria-live="polite" style="margin: 10px 0 0;"></p>
+        </div>
+
+        <div class="cal-tune" style="margin-top: 16px;">
           <div class="cal-tune__controls">
 
             <!-- a. Gref -->
             <div class="param-group">
-              <div class="param-group__title"><span>a. Starting stiffness, G<sub>ref</sub></span></div>
+              <div class="param-group__title"><span>a. Stiffness, G<sub>ref</sub></span></div>
               <div class="param-field">
                 <label for="cal-nu"><span class="param-symbol"><i>&nu;</i></span> &ndash; Poisson&rsquo;s ratio</label>
-                <input type="number" id="cal-nu" name="cal-nu" value="0.25" step="any">
+                <input type="number" id="cal-nu" name="cal-nu" value="0.2" step="any">
               </div>
               <div class="param-field">
                 <label for="cal-m"><span class="param-symbol"><i>m</i></span> &ndash; stiffness exponent</label>
@@ -1486,12 +1588,12 @@
               </div>
 
               <fieldset class="cal-radio-group">
-                <legend>Method</legend>
-                <label class="cal-radio"><input type="radio" name="gref-method" value="spt" checked> <span>Estimate from SPT N-value</span></label>
-                <label class="cal-radio"><input type="radio" name="gref-method" value="manual"> <span>Enter G<sub>ref</sub> manually</span></label>
+                <legend>Starting value</legend>
+                <label class="cal-radio"><input type="radio" name="gref-method" value="spt"> <span>Estimate from SPT N-value</span></label>
+                <label class="cal-radio"><input type="radio" name="gref-method" value="manual" checked> <span>Enter G<sub>ref</sub> manually</span></label>
               </fieldset>
 
-              <div id="gref-spt-fields">
+              <div id="gref-spt-fields" hidden>
                 <div class="param-field">
                   <label for="spt-n">SPT N-value</label>
                   <input type="number" id="spt-n" name="spt-n" value="25" step="any">
@@ -1506,7 +1608,7 @@
               </div>
 
               <div class="param-field">
-                <label for="cal-gref"><span class="param-symbol"><i>G<sub>ref</sub></i></span> <span id="gref-label-hint">&ndash; suggested</span></label>
+                <label for="cal-gref"><span class="param-symbol"><i>G<sub>ref</sub></i></span> <span id="gref-label-hint">&ndash; shear modulus at p<sub>ref</sub></span></label>
                 <input type="number" id="cal-gref" name="cal-gref" value="20000" step="any">
                 <span class="param-unit">kPa</span>
               </div>
@@ -1515,12 +1617,13 @@
                 <input type="range" id="cal-gref-range" aria-label="Gref slider" data-for="cal-gref" data-mode="relative">
                 <span class="cal-slider__lim" id="cal-gref-max"></span>
               </div>
+              <p class="cal-note">G<sub>ref</sub> is the shear modulus at the CSL reference pressure p<sub>ref</sub> from step 3, not at each test&rsquo;s p&prime;<sub>0</sub>. Drained tests are only mildly sensitive to stiffness. Undrained tests show it more clearly (Jefferies &amp; Been 2016, &sect;9.3.6.1).</p>
             </div>
 
             <!-- b. H0 -->
             <div class="param-group">
-              <div class="param-group__title"><span>b. Initial hardening, H<sub>0</sub></span></div>
-              <p class="cal-note">State-dependent hardening is initially disabled (H<sub>y</sub> = 0), so H = H<sub>0</sub>. Adjust H<sub>0</sub> to improve agreement between the laboratory data and the NorSand simulation.</p>
+              <div class="param-group__title"><span>b. Hardening, H<sub>0</sub></span></div>
+              <p class="cal-note">Start with H<sub>y</sub> = 0, so H = H<sub>0</sub>. Adjust H<sub>0</sub> to bring the simulated and measured curves together.</p>
               <div class="param-field">
                 <label for="cal-h0"><span class="param-symbol"><i>H<sub>0</sub></i></span> &ndash; hardening modulus</label>
                 <input type="number" id="cal-h0" name="cal-h0" value="60" step="any">
@@ -1536,7 +1639,7 @@
             <!-- c. Hy -->
             <div class="param-group">
               <div class="param-group__title"><span>c. State-dependent hardening, H<sub>y</sub></span></div>
-              <p class="cal-note">Check the fit across tests with different initial state parameters. Only if a single H<sub>0</sub> cannot match them all, include H<sub>y</sub> and calibrate H<sub>0</sub> and H<sub>y</sub> against several tests at once.</p>
+              <p class="cal-note">Only if one H<sub>0</sub> cannot match tests with different &psi;<sub>0</sub>, include H<sub>y</sub>. The relationship H = H<sub>0</sub> &minus; H<sub>y</sub>&psi; across tests is not fitted here.</p>
               <fieldset class="cal-radio-group">
                 <legend>Include state-dependent hardening?</legend>
                 <label class="cal-radio"><input type="radio" name="hy-mode" value="no" checked> <span>No: H = H<sub>0</sub></span></label>
@@ -1553,42 +1656,82 @@
               </div>
             </div>
 
-            <!-- Softening and run settings -->
+            <!-- d. Initial state and softening -->
             <div class="param-group">
-              <div class="param-group__title">Softening and simulation</div>
+              <div class="param-group__title"><span>d. Initial state and softening</span></div>
+              <div class="param-field">
+                <label for="cal-ocr">OCR &ndash; for this test</label>
+                <input type="number" id="cal-ocr" name="cal-ocr" value="1.1" step="any" min="1">
+              </div>
+              <p class="cal-note">OCR is the physical initial state from step 1, not a fitting parameter. It matters little for drained tests but can improve the start of undrained tests.</p>
               <div class="param-field">
                 <label for="cal-s"><span class="param-symbol"><i>S</i></span> &ndash; additional softening</label>
-                <input type="number" id="cal-s" name="cal-s" value="0" step="any">
+                <select id="cal-s" name="cal-s">
+                  <option value="0">0 &ndash; off</option>
+                  <option value="1">1 &ndash; on (undrained only)</option>
+                </select>
+              </div>
+              <p class="cal-note">S = 1 adds undrained softening. Choose it only when the data supports it. It is never switched on automatically.</p>
+            </div>
+
+            <!-- e. Comparison settings -->
+            <div class="param-group">
+              <div class="param-group__title"><span>e. Comparison settings</span></div>
+              <div class="param-field">
+                <label for="trial-cutoff">Score up to &epsilon;<sub>1</sub> (blank = whole test)</label>
+                <input type="number" id="trial-cutoff" name="trial-cutoff" step="any" min="0">
+                <span class="param-unit">%</span>
               </div>
               <div class="param-field">
-                <label for="cal-steps">Simulation steps</label>
-                <input type="number" id="cal-steps" name="cal-steps" value="501" step="1">
+                <label for="trial-rtol">Solver tolerance</label>
+                <select id="trial-rtol" name="trial-rtol">
+                  <option value="0.001" selected>0.001 &ndash; standard</option>
+                  <option value="0.0003">0.0003 &ndash; finer check</option>
+                </select>
               </div>
+              <p class="cal-note">The simulation always runs to the last recorded strain. The cutoff only changes which points are scored.</p>
             </div>
           </div>
 
           <div>
-            <div class="cal-legend"><span class="cal-legend__lab">Lab: points</span><span class="cal-legend__model">NorSand: line</span></div>
-            <div class="cal-plot-grid cal-plot-grid--stack">
-              <div class="cal-plot" id="fit-q-eps1"><span class="cal-plot__title">q &ndash; &epsilon;<sub>1</sub></span><span>All included tests</span></div>
-              <div class="cal-plot" id="fit-p-q"><span class="cal-plot__title">p&prime; &ndash; q</span><span>Stress paths</span></div>
-              <div class="cal-plot" id="fit-vol"><span class="cal-plot__title">&epsilon;<sub>v</sub> &ndash; &epsilon;<sub>1</sub> for CID, &Delta;u &ndash; &epsilon;<sub>1</sub> for CIU</span><span>Volume change or pore pressure</span></div>
-            </div>
-            <div class="param-group" style="margin-top: 16px;">
-              <div class="param-group__title">Fit across states</div>
-              <p class="cal-note">If the error grows steadily with &psi;<sub>0</sub>, a single H<sub>0</sub> is not enough and H<sub>y</sub> is justified.</p>
-              <div class="cal-table-wrap">
-                <table class="cal-table" id="state-check">
-                  <thead>
-                    <tr><th>Test</th><th>&psi;<sub>0</sub></th><th>OCR</th><th>q error (%)</th></tr>
-                  </thead>
-                  <tbody>
-                    <tr class="cal-table__empty"><td colspan="4">Errors appear here once NorSand has run.</td></tr>
-                  </tbody>
-                </table>
-              </div>
+            <div class="cal-legend"><span class="cal-legend__lab">Laboratory</span><span class="cal-legend__model">NorSand trial</span></div>
+            <div class="cal-plot-grid">
+              <div class="cal-plot" id="fit-q-eps1"><span class="cal-plot__title">q &ndash; &epsilon;<sub>1</sub></span><span>Run a test to compare</span></div>
+              <div class="cal-plot" id="fit-p-q"><span class="cal-plot__title">p&prime; &ndash; q</span><span>Effective stress path</span></div>
+              <div class="cal-plot" id="fit-vol"><span class="cal-plot__title">&epsilon;<sub>v</sub> or &Delta;u &ndash; &epsilon;<sub>1</sub></span><span>Volume change for CID, pore pressure for CIU</span></div>
+              <div class="cal-plot" id="fit-psi"><span class="cal-plot__title">&psi; &ndash; &epsilon;<sub>1</sub></span><span>State parameter</span></div>
             </div>
           </div>
+        </div>
+
+        <h2 class="cal-section-title">Fit across states</h2>
+        <p class="cal-note">The latest run of each test. If the q error grows steadily with &psi;<sub>0</sub>, a single H<sub>0</sub> is not enough and H<sub>y</sub> may be justified.</p>
+        <div class="cal-table-wrap">
+          <table class="cal-table" id="state-check">
+            <thead>
+              <tr><th>Test</th><th>CID / CIU</th><th>&psi;<sub>0</sub></th><th>OCR</th><th>G<sub>ref</sub></th><th>H<sub>0</sub></th><th>H<sub>y</sub></th><th>S</th><th>q RMSE (kPa)</th><th>q R&sup2;</th><th>&epsilon;<sub>v</sub> or &Delta;u RMSE</th><th>&psi; RMSE</th><th>Peak q, lab / model</th></tr>
+            </thead>
+            <tbody>
+              <tr class="cal-table__empty"><td colspan="13">Results appear here once NorSand has run.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 class="cal-section-title">Trial log</h2>
+        <p class="cal-note">Every run is kept, including failed ones, so you can trace how the values changed.</p>
+        <div class="cal-table-wrap">
+          <table class="cal-table" id="trial-log">
+            <thead>
+              <tr><th>Run</th><th>Test</th><th>Status</th><th>G<sub>ref</sub></th><th>H<sub>0</sub></th><th>H<sub>y</sub></th><th>OCR</th><th>&nu;</th><th>m</th><th>S</th><th>q RMSE</th><th>q R&sup2;</th><th>Note</th></tr>
+            </thead>
+            <tbody>
+              <tr class="cal-table__empty"><td colspan="13">No runs yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="cal-inline-buttons" style="margin-top: 12px;">
+          <button type="button" class="download-button" id="trial-download-log">Download trial log (.csv)</button>
+          <button type="button" class="download-button" id="trial-download-sim">Download latest simulation (.csv)</button>
         </div>
 
         <div class="cal-pager">
@@ -1608,13 +1751,131 @@
         </div>
         <dl class="cal-info" id="info-6" hidden>
           <dt>What are we doing?</dt>
-          <dd>Running every test with one shared parameter set and exporting the result.</dd>
+          <dd>Turning each test&rsquo;s own G<sub>ref</sub> and H into one hardening law and one stiffness law, then running every test again with those shared values.</dd>
           <dt>Why are we doing it?</dt>
-          <dd>A calibration is only useful if a single set of soil parameters describes all the tests reasonably well.</dd>
+          <dd>A calibration is only useful if a single set of soil parameters describes all the tests reasonably well.
+            <div class="equation">H = H<sub>0</sub> &minus; H<sub>y</sub> &psi; &nbsp;&nbsp; G = G<sub>ref</sub> (p&prime;/p<sub>ref</sub>)<sup>m</sup></div>
+          </dd>
         </dl>
-        <p class="cal-lead">All tests are shown with one parameter set, not one set per test.</p>
+        <p class="cal-lead">The values each test needed on its own in step 5 are plotted against &psi;<sub>0</sub> and fitted with straight lines. Every test is then run with the shared values, so you can see what a single parameter set gives up compared with per-test values.</p>
+        <p class="cal-warning" id="common-status">Run the tests in step 5 first, or load the worked example below.</p>
 
-        <h2 class="cal-section-title">Calibrated NorSand parameters</h2>
+        <!-- 6A -->
+        <h2 class="cal-section-title"><span class="cal-section-title__tag">6A</span> <span>Values chosen for each test</span></h2>
+        <p class="cal-note">G<sub>ref</sub> and H start from each test&rsquo;s latest step 5 run (H = H<sub>0</sub> &minus; H<sub>y</sub>&psi;<sub>0</sub> for that run). Edit any value, or untick a test to leave it out. These are manual fits, not stiffness measurements, so m stays fixed and is not fitted.</p>
+        <div class="cal-inline-buttons" style="margin-bottom: 12px;">
+          <button type="button" class="reset-button" id="common-fill-step5">Fill from the latest step 5 runs</button>
+          <button type="button" class="reset-button" id="common-load-vincent">Load Vincent&rsquo;s Fraser River sand values</button>
+        </div>
+        <label class="cal-checkbox" id="common-vincent-psi-field" hidden><input type="checkbox" id="common-vincent-psi"> <span>Use Vincent&rsquo;s &psi;<sub>0</sub> instead of &psi;<sub>0</sub> from the step 3 CSL (reproduces his regression)</span></label>
+        <div class="cal-table-wrap">
+          <table class="cal-table" id="common-inputs">
+            <thead>
+              <tr><th>Use</th><th>Test</th><th>CID / CIU</th><th>p&prime;<sub>0</sub> (kPa)</th><th>&psi;<sub>0</sub></th><th>G<sub>ref</sub> (kPa)</th><th>H</th><th>OCR</th><th>S</th><th>Source</th></tr>
+            </thead>
+            <tbody>
+              <tr class="cal-table__empty"><td colspan="10">Tests appear here once the CSL and plasticity are calibrated.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="cal-workspace" style="margin-top: 12px;">
+          <div class="param-group">
+            <div class="param-group__title">Fixed elastic values</div>
+            <div class="param-field">
+              <label for="common-m"><span class="param-symbol"><i>m</i></span> &ndash; stiffness exponent</label>
+              <input type="number" id="common-m" value="0.47" step="any">
+            </div>
+            <div class="param-field">
+              <label for="common-nu"><span class="param-symbol"><i>&nu;</i></span> &ndash; Poisson&rsquo;s ratio</label>
+              <input type="number" id="common-nu" value="0.2" step="any">
+            </div>
+            <p class="cal-note">G<sub>ref</sub> is at the CSL reference pressure from step 3, <span id="common-pref">p<sub>ref</sub></span>.</p>
+          </div>
+        </div>
+
+        <!-- 6B -->
+        <h2 class="cal-section-title"><span class="cal-section-title__tag">6B</span> <span>Common relationships</span></h2>
+        <div class="cal-fit-cards">
+          <div class="param-group">
+            <div class="param-group__title">Hardening</div>
+            <p class="cal-formula">H = H<sub>0</sub> &minus; H<sub>y</sub> &psi;<sub>0</sub></p>
+            <div class="param-field"><label>H<sub>0</sub></label><output class="cal-output" id="common-h0">&ndash;</output></div>
+            <div class="param-field"><label>H<sub>y</sub></label><output class="cal-output" id="common-hy">&ndash;</output></div>
+            <div class="param-field"><label>R&sup2;</label><output class="cal-output" id="common-h-r2">&ndash;</output></div>
+            <div class="param-field"><label>RMSE</label><output class="cal-output" id="common-h-rmse">&ndash;</output></div>
+            <div class="param-field"><label>Leave-one-out RMSE</label><output class="cal-output" id="common-h-loo">&ndash;</output></div>
+            <p class="cal-note">The solver uses the current &psi; during shearing, not &psi;<sub>0</sub>.</p>
+          </div>
+          <div class="param-group">
+            <div class="param-group__title">One stiffness</div>
+            <p class="cal-formula">G = G<sub>ref</sub> (p&prime;/p<sub>ref</sub>)<sup>m</sup></p>
+            <div class="param-field"><label>G<sub>ref</sub> (kPa)</label><output class="cal-output" id="common-gc">&ndash;</output></div>
+            <div class="param-field"><label>R&sup2;</label><output class="cal-output" id="common-gc-r2">&ndash;</output></div>
+            <div class="param-field"><label>RMSE (kPa)</label><output class="cal-output" id="common-gc-rmse">&ndash;</output></div>
+            <p class="cal-note">The geometric mean of the individual values. This is the standard NorSand form.</p>
+          </div>
+          <div class="param-group">
+            <div class="param-group__title">State-dependent stiffness</div>
+            <p class="cal-formula">G<sub>ref</sub> = a + b &psi;<sub>0</sub></p>
+            <div class="param-field"><label>a (kPa)</label><output class="cal-output" id="common-ga">&ndash;</output></div>
+            <div class="param-field"><label>b (kPa)</label><output class="cal-output" id="common-gb">&ndash;</output></div>
+            <div class="param-field"><label>R&sup2;</label><output class="cal-output" id="common-gs-r2">&ndash;</output></div>
+            <div class="param-field"><label>RMSE (kPa)</label><output class="cal-output" id="common-gs-rmse">&ndash;</output></div>
+            <div class="param-field"><label>Leave-one-out RMSE</label><output class="cal-output" id="common-gs-loo">&ndash;</output></div>
+            <p class="cal-note">A descriptive trend, as in Vincent&rsquo;s calibration. It may mix pressure and density effects.</p>
+          </div>
+        </div>
+        <p class="cal-note" id="common-fit-status" style="margin-top: 10px;"></p>
+        <div class="cal-plot-grid" style="margin-top: 12px;">
+          <div class="cal-plot" id="common-h"><span class="cal-plot__title">H &ndash; &psi;<sub>0</sub></span><span>Individual H and the common line</span></div>
+          <div class="cal-plot" id="common-g"><span class="cal-plot__title">G<sub>ref</sub> &ndash; &psi;<sub>0</sub></span><span>Individual G<sub>ref</sub> and both stiffness laws</span></div>
+          <div class="cal-plot" id="common-gp0"><span class="cal-plot__title">G at p&prime;<sub>0</sub></span><span>Pressure effect with m fixed</span></div>
+          <div class="cal-plot" id="common-gpred"><span class="cal-plot__title">Predicted &ndash; individual G<sub>ref</sub></span><span>How well each law reproduces the manual values</span></div>
+        </div>
+        <p class="cal-note" style="margin-top: 8px;">All points are used in the fit, so these statistics are in-sample. A high R&sup2; alone is not a reason to adopt a relationship. Check the simulated curves below.</p>
+
+        <!-- 6C -->
+        <h2 class="cal-section-title"><span class="cal-section-title__tag">6C</span> <span>Run every test with the shared values</span></h2>
+        <div class="cal-inline-buttons">
+          <button type="button" class="run-button" id="common-run" disabled>Run all tests with both stiffness laws</button>
+        </div>
+        <p class="cal-note" id="common-run-status" aria-live="polite" style="margin: 10px 0 12px;">Each test keeps its own measured initial state, OCR and S. Nothing is fitted to the curves here.</p>
+        <div class="cal-table-wrap">
+          <table class="cal-table" id="fit-errors">
+            <thead>
+              <tr><th>Test</th><th>CID / CIU</th><th>&psi;<sub>0</sub></th><th>Stiffness law</th><th>G<sub>ref</sub> (kPa)</th><th>q RMSE (kPa)</th><th>q R&sup2;</th><th>&epsilon;<sub>v</sub> or &Delta;u RMSE</th><th>&psi; RMSE</th><th>Peak q, lab / model</th><th>Step 5 q RMSE</th></tr>
+            </thead>
+            <tbody>
+              <tr class="cal-table__empty"><td colspan="11">Results appear here after the shared run.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="cal-trial-bar" style="margin-top: 16px;">
+          <label for="final-test" class="cal-subhead" style="margin: 0;">Show test</label>
+          <select id="final-test" class="cal-select"><option value="">No results yet</option></select>
+        </div>
+        <div class="cal-legend" style="margin-top: 12px;"><span class="cal-legend__lab">Laboratory</span><span class="cal-legend__model">One stiffness</span><span class="cal-legend__state">State-dependent stiffness</span></div>
+        <div class="cal-plot-grid">
+          <div class="cal-plot" id="final-q-eps1"><span class="cal-plot__title">q &ndash; &epsilon;<sub>1</sub></span><span>Shared values</span></div>
+          <div class="cal-plot" id="final-p-q"><span class="cal-plot__title">p&prime; &ndash; q</span><span>Effective stress path</span></div>
+          <div class="cal-plot" id="final-vol"><span class="cal-plot__title">&epsilon;<sub>v</sub> or &Delta;u &ndash; &epsilon;<sub>1</sub></span><span>Volume change or pore pressure</span></div>
+          <div class="cal-plot" id="final-psi"><span class="cal-plot__title">&psi; &ndash; &epsilon;<sub>1</sub></span><span>State parameter</span></div>
+        </div>
+
+        <!-- 6D -->
+        <h2 class="cal-section-title"><span class="cal-section-title__tag">6D</span> <span>Calibrated NorSand parameters</span></h2>
+        <div class="param-group" style="margin-bottom: 16px;">
+          <div class="param-group__title">Adopt the shared values</div>
+          <fieldset class="cal-radio-group cal-radio-group--inline">
+            <legend>Stiffness law</legend>
+            <label class="cal-radio"><input type="radio" name="adopt-law" value="const" checked> <span>One stiffness, G<sub>ref</sub> (standard NorSand)</span></label>
+            <label class="cal-radio"><input type="radio" name="adopt-law" value="state"> <span>State-dependent, G<sub>ref</sub> = a + b&psi;<sub>0</sub></span></label>
+          </fieldset>
+          <div class="cal-inline-buttons">
+            <button type="button" class="run-button" id="common-adopt" disabled>Adopt these values</button>
+          </div>
+          <p class="cal-note" id="common-adopt-status" style="margin: 10px 0 0;">Nothing is adopted automatically. The CSL and plasticity rows are filled when you accept them in steps 3 and 4.</p>
+        </div>
         <div class="cal-summary" id="final-params">
           <div class="param-group">
             <div class="param-group__title">CSL</div>
@@ -1651,24 +1912,6 @@
           <button type="button" class="download-button" id="export-figures">Download Figures</button>
           <button type="button" class="download-button" id="export-results">Download Calibration Results</button>
           <button type="button" class="download-button" id="export-report">Download Report</button>
-        </div>
-
-        <h2 class="cal-section-title">Fit by test</h2>
-        <div class="cal-table-wrap">
-          <table class="cal-table" id="fit-errors">
-            <thead>
-              <tr><th>Test</th><th>CID / CIU</th><th>&psi;<sub>0</sub></th><th>q error (%)</th><th>&epsilon;<sub>v</sub> or &Delta;u error (%)</th><th>Peak q, lab vs model</th><th>Used in calibration</th></tr>
-            </thead>
-            <tbody>
-              <tr class="cal-table__empty"><td colspan="7">Errors appear here after the final run.</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="cal-plot-grid" style="margin-top: 16px;">
-          <div class="cal-plot cal-plot--tall" id="final-q-eps1"><span class="cal-plot__title">q &ndash; &epsilon;<sub>1</sub></span><span>All tests with the final parameters</span></div>
-          <div class="cal-plot cal-plot--tall" id="final-p-q"><span class="cal-plot__title">p&prime; &ndash; q</span><span>All stress paths with the CSL</span></div>
-          <div class="cal-plot cal-plot--tall" id="final-vol"><span class="cal-plot__title">&epsilon;<sub>v</sub> or &Delta;u &ndash; &epsilon;<sub>1</sub></span><span>All tests with the final parameters</span></div>
         </div>
 
         <div class="cal-pager">
@@ -1709,6 +1952,8 @@
       if (window.Plotly) {
         document.getElementById(`step-${n}`).querySelectorAll('.js-plotly-plot').forEach(d => Plotly.Plots.resize(d));
       }
+      // calibrate.py listens for this to bring a step up to date when it is opened.
+      document.dispatchEvent(new CustomEvent('cal:step', { detail: n }));
       if (fromUser) {
         history.replaceState(null, '', `#step-${n}`);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1898,7 +2143,7 @@
       document.getElementById(`${slider.dataset.for}-max`).textContent = formatLimit(max);
     }
 
-    document.querySelectorAll('.cal-slider input[type="range"]').forEach(slider => {
+    document.querySelectorAll('.cal-slider input[type="range"][data-for]').forEach(slider => {
       const box = document.getElementById(slider.dataset.for);
       setRange(slider, Number(box.value) || 0);
 
@@ -1948,7 +2193,7 @@
     document.querySelectorAll('input[name="gref-method"]').forEach(r => {
       r.addEventListener('change', () => {
         sptFields.hidden = !sptSelected();
-        grefHint.innerHTML = sptSelected() ? '&ndash; suggested, editable' : '&ndash; reference shear modulus';
+        grefHint.innerHTML = sptSelected() ? '&ndash; suggested, editable' : '&ndash; shear modulus at p<sub>ref</sub>';
         if (sptSelected()) updateSptEstimate();
       });
     });
@@ -1959,8 +2204,7 @@
       });
     });
 
-    grefHint.innerHTML = '&ndash; suggested, editable';
-    updateSptEstimate();
+    // Manual entry is the default, so the SPT estimate only fills Gref once that method is chosen.
 
     // Hy stays at zero and locked until state-dependent hardening is switched on.
     const hyBox = document.getElementById('cal-hy');
